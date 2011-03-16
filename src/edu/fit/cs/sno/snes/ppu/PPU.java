@@ -1,0 +1,232 @@
+package edu.fit.cs.sno.snes.ppu;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import edu.fit.cs.sno.applet.SNOApplet;
+import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
+import edu.fit.cs.sno.util.Log;
+import edu.fit.cs.sno.util.Settings;
+import edu.fit.cs.sno.util.Util;
+
+public class PPU {
+	// Memory declarations
+	public static int vram[] = new int[64*1024]; // Video RAM
+	public static Background bg[] = new Background[4];
+	static {
+		bg[0] = new Background(1);
+		bg[1] = new Background(2);
+		bg[2] = new Background(3);
+		bg[3] = new Background(4);
+	}
+	
+	public static boolean screenBlank = false;
+	public static float brightness = 1;
+	public static boolean vBlanking = false;
+	
+	public static int mode = 0;
+	
+	public static BufferedImage screenBuffer;
+	public static boolean mode1BG3Priority = false;
+
+	public static int screenWidth = 256;
+	public static int screenHeight = 240;
+	
+	public static boolean drawWindow1 = false;
+	public static boolean drawWindow2 = false;
+	public static Color window1Color = new Color(0, 255, 0);
+	public static Color window2Color = new Color(255, 0, 255);
+	
+	public static long unprocessedCycles;
+	public static int x;
+	public static int y;
+	
+	public static void setMode(int mode) {
+		PPU.mode = mode;
+		
+		// Backgrounds and OAM output a priority value that Screen uses to
+		// determine which pixel is on top; For BGs, priority is a single bit
+		// in each tile, while objs have 2 bits to select from 4 different
+		// priorities per sprite
+		switch(mode) {
+			case 0:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color4;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color4;
+				bg[2].enabled = true; bg[2].colorMode = ColorMode.Color4;
+				bg[3].enabled = true; bg[3].colorMode = ColorMode.Color4;
+				
+				bg[0].priority0 = 8; bg[0].priority1 = 11;
+				bg[1].priority0 = 7; bg[1].priority1 = 10; 
+				bg[2].priority0 = 2; bg[2].priority1 = 5;
+				bg[3].priority0 = 1; bg[3].priority1 = 4;
+				OAM.priorityMap[0] = 3; OAM.priorityMap[1] = 6; OAM.priorityMap[2] = 7; OAM.priorityMap[3] = 12;
+				break;
+			case 1: 
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color16;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color16;
+				bg[2].enabled = true; bg[2].colorMode = ColorMode.Color4;
+				bg[3].enabled = false;
+				if (mode1BG3Priority) {
+					bg[0].priority0 = 5; bg[0].priority1 = 8;
+					bg[1].priority0 = 4; bg[1].priority1 = 7;
+					bg[2].priority0 = 1; bg[2].priority1 = 10;
+					OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 3; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 9;
+				} else {
+					bg[0].priority0 = 6; bg[0].priority1 = 9;
+					bg[1].priority0 = 5; bg[1].priority1 = 8;
+					bg[2].priority0 = 1; bg[2].priority1 = 3;
+					OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 7; OAM.priorityMap[3] = 10;
+				}
+				break;
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+				break;
+		}
+	}
+	
+	public static void blankScreen(boolean blank) {
+		screenBlank = blank;
+	}
+
+	public static void setBrightness(float i) {
+		brightness = (i / 15);
+	}
+	
+	/**
+	 * vBlank is called by Timing when vBlank first occurs. It outputs the current
+	 * frame and resets everything for the next frame.
+	 */
+	public static void vBlank() {
+		// Draw out current frame
+		if (SNOApplet.instance != null) SNOApplet.instance.screen.drawFrame();
+		
+		// Draw color 0 as the base color if the screen is completely transparent
+		screenBuffer.getGraphics().setColor(new Color(CGRAM.getColor(0)));
+		screenBuffer.getGraphics().fillRect(0, 0, screenBuffer.getWidth(), screenBuffer.getHeight());
+
+		// Activate vblank and reset to the top of the screen
+		vBlanking = true;		
+		x = 0;
+		y = 0;
+		
+		// Reset each bg and oam
+		bg[0].vBlank();
+		bg[1].vBlank();
+		bg[2].vBlank();
+		bg[3].vBlank();
+		OAM.vBlank();
+	}
+	
+	/**
+	 * Init is called once to initialize the PPU. This probably isn't needed.
+	 */
+	public static void init() {
+		screenBuffer = new BufferedImage(256, 240, BufferedImage.TYPE_INT_ARGB);
+	}
+	
+	/**
+	 * Render cycles runs the PPU for the amount of cycles passed in. 
+	 * 
+	 * The PPU outputs one pixel every 4 cycles, with the exception of 
+	 * pixels 323 and 327, which take 6 cycles, for a total of 1364 cycles
+	 * per scanline.
+	 * 
+	 * There are always 340 pixels per scanline. But only pixels 22-277 are
+	 * displayed for a total of 256 displayed pixels. renderCycles calls loadPixel()
+	 * for each of these 256 pixels, and writes the final output to the screenBuffer.
+	 * 
+	 * @param cycles Number of cycles to process
+	 */
+	public static void renderCycles(long cycles) {
+		// Don't render during vBlank
+		if (!vBlanking) {
+			// Loop until we run out of 4-cycle pixels to process
+			unprocessedCycles += cycles;
+			while (unprocessedCycles > 4) {
+				// Dots 323 and 327 take 6 cycles
+				if (x == 323 || x == 327) {
+					if (unprocessedCycles >= 6) {
+						unprocessedCycles -= 6;
+					} else {
+						break;
+					}
+				} else {
+					unprocessedCycles -= 4;
+				}
+				
+				// Only draw pixels 22 - 277
+				if (Util.inRange(x, 22, 277)) {
+					// loadPixel processes the current pixel and sets
+					// the output on each BG and OAM to the correct pixel
+					bg[0].loadPixel();
+					bg[1].loadPixel();
+					bg[2].loadPixel();
+					bg[3].loadPixel();
+					OAM.loadPixel();
+					
+					// Mask out pixels
+					Window.maskPixel(x - 22);
+					
+					// Screen then combines the output of everything into a single color
+					int color = Screen.doPixel(x - 22);
+					
+					// Convert the SNES-format color (intger in the form bbbbbgggggrrrrr, b = blue bits, g = green bits,
+					// r = red bits) to an ARGB format color
+					int r, g, b, realColor;
+					r = ((int) (SNESColor.getColor(color, SNESColor.RED) * PPU.brightness) & 0x1F) << 19;
+					g = ((int) (SNESColor.getColor(color, SNESColor.GREEN) * PPU.brightness) & 0x1F) << 11;
+					b = ((int) (SNESColor.getColor(color, SNESColor.BLUE) * PPU.brightness) & 0x1F) << 3;
+					realColor = (0xFF << 24) | r | g | b;
+					
+					// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
+					screenBuffer.setRGB(x - 22, y, realColor);
+				}
+
+				x++;
+			}
+		}
+	}
+	
+	/**
+	 * scanline() is called once per scanline by Timing. It resets each BG and OAM
+	 * to prepare for rendering the next scanline;
+	 */
+	public static void scanline() {
+		// No scanlines during vBlank
+		if (!vBlanking) {
+			bg[0].nextScanline();
+			bg[1].nextScanline();
+			bg[2].nextScanline();
+			bg[3].nextScanline();
+			OAM.scanline(y);
+			x = 0;
+			y++;
+		}
+	}
+	
+	public static void dumpVRAM() {
+		if (Settings.get(Settings.DEBUG_DIR) != null) {
+			try {
+				String fname = Settings.get(Settings.DEBUG_DIR) + "/vram.bin";
+				FileOutputStream fos = new FileOutputStream(fname);
+				for(int i=0; i<vram.length; i++)
+					fos.write(vram[i]);
+				fos.close();
+			} catch (IOException e) {
+				System.out.println("Unable to dump vram");
+				e.printStackTrace();
+			}
+		}
+		Log.debug(bg[0].toString());
+		Log.debug(bg[1].toString());
+		Log.debug(bg[2].toString());
+		Log.debug(bg[3].toString());
+	}
+
+}

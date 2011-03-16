@@ -1,0 +1,17 @@
+package edu.fit.cs.sno.snes.apu;
+
+public enum APUAddrMode {
+	IMMEDIATE,
+	INDIRECT_X,
+	INDIRECT_Y,
+	INDIRECT_X_INC, 
+	DIRECT_PAGE,
+	DIRECT_PAGE_X,
+	DIRECT_PAGE_Y,
+	ABSOLUTE,
+	ABSOLUTE_BYTE,
+	ABSOLUTE_X,
+	ABSOLUTE_Y,
+	ABSOLUTE_DP_X,
+	ABSOLUTE_DP_Y
+}
