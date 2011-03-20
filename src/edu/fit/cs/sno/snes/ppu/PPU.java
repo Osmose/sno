@@ -22,6 +22,9 @@ public class PPU {
 		bg[3] = new Background(4);
 		
 		init();
+		
+		if (Settings.get(Settings.FRAMES_TO_SKIP) != null)
+			skipLimit = Settings.getInt(Settings.FRAMES_TO_SKIP);
 	}
 	
 	public static boolean screenBlank = false;
@@ -44,6 +47,11 @@ public class PPU {
 	public static long unprocessedCycles;
 	public static int x;
 	public static int y;
+	
+	// Whether or not to actually render the frames
+	public static boolean renderFrames = true;
+	public static int skipCount = 0;
+	public static int skipLimit = 5; // draw 1 out of 30 frames
 	
 	public static void setMode(int mode) {
 		PPU.mode = mode;
@@ -108,10 +116,6 @@ public class PPU {
 		// Draw out current frame
 		if (SNOApplet.instance != null) SNOApplet.instance.screen.drawFrame();
 		
-		// Draw color 0 as the base color if the screen is completely transparent
-		screenBuffer.getGraphics().setColor(new Color(CGRAM.getColor(0)));
-		screenBuffer.getGraphics().fillRect(0, 0, screenBuffer.getWidth(), screenBuffer.getHeight());
-
 		// Activate vblank and reset to the top of the screen
 		vBlanking = true;		
 		x = 0;
@@ -123,6 +127,19 @@ public class PPU {
 		bg[2].vBlank();
 		bg[3].vBlank();
 		OAM.vBlank();
+		
+		if (!renderFrames) {
+			skipCount++;
+			if(skipCount>=skipLimit){
+				skipCount = 0;
+			} else {
+				return;
+			}
+		}
+		
+		// Draw color 0 as the base color if the screen is completely transparent
+		screenBuffer.getGraphics().setColor(new Color(CGRAM.getColor(0)));
+		screenBuffer.getGraphics().fillRect(0, 0, screenBuffer.getWidth(), screenBuffer.getHeight());
 	}
 	
 	/**
@@ -163,7 +180,7 @@ public class PPU {
 				}
 				
 				// Only draw pixels 22 - 277
-				if (Util.inRange(x, 22, 277)) {
+				if (Util.inRange(x, 22, 277) && (renderFrames || (!renderFrames && skipCount==0))) {
 					// loadPixel processes the current pixel and sets
 					// the output on each BG and OAM to the correct pixel
 					bg[0].loadPixel();

@@ -73,19 +73,27 @@ public class Input {
 	public static KeyListener keyListener = new KeyListener() {
 
 		@Override
-		public void keyPressed(KeyEvent arg0) {
-			if (!handleFunctionKeys(arg0)) {
-				Input.state.put(SNESController.fromKeyCode(arg0.getKeyCode()), true);
+		public void keyPressed(KeyEvent e) {
+			if (!handleFunctionKeys(e)) {
+				Input.state.put(SNESController.fromKeyCode(e.getKeyCode()), true);
+			}
+			
+			// Don't draw frames while pressed
+			if (e.getKeyCode() == KeyEvent.VK_BACK_QUOTE) {
+				PPU.renderFrames = false;
 			}
 		}
 
 		@Override
-		public void keyReleased(KeyEvent arg0) {
-			Input.state.put(SNESController.fromKeyCode(arg0.getKeyCode()), false);
+		public void keyReleased(KeyEvent e) {
+			Input.state.put(SNESController.fromKeyCode(e.getKeyCode()), false);
+			if (e.getKeyCode() == KeyEvent.VK_BACK_QUOTE) {
+				PPU.renderFrames = true;
+			}
 		}
 
 		@Override
-		public void keyTyped(KeyEvent arg0) {
+		public void keyTyped(KeyEvent e) {
 			// TODO Auto-generated method stub
 			
 		}

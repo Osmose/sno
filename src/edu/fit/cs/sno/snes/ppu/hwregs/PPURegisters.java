@@ -57,7 +57,7 @@ public class PPURegisters {
 	public static HWRegister m7 = new HWRegister() {
 		@Override
 		public void onWrite(int value) {
-			Log.err("[Unimplemented] Mode 7 registers not implemented");
+			//Log.err("[Unimplemented] Mode 7 registers not implemented");
 		}
 	};
 	
