@@ -32,7 +32,7 @@ public class LoROMMemory extends Memory {
 		} else if (bank == 0x7E) {	// WRAM
 			return getFromArray(size, wram, addr);
 		} else if (bank == 0x7F) {	// Moar wram
-			return getFromArray(size, wram, (addr + 0x8000));
+			return getFromArray(size, wram, (addr + 0x10000));
 		} else if (Util.inRange(bank, 0x80, 0xBF)) {
 			if (addr < 0x2000) { // WRAM
 				return getFromArray(size, wram, addr);
@@ -76,7 +76,7 @@ public class LoROMMemory extends Memory {
 			setInArray(size, wram, addr, val);
 			return;
 		} else if (bank == 0x7F) {	// Moar WRAM
-			setInArray(size, wram, (addr + 0x8000), val);
+			setInArray(size, wram, (addr + 0x10000), val);
 			return;
 		} else if (Util.inRange(bank, 0x80, 0xBF)) {
 			if (addr < 0x2000) { // WRAM
