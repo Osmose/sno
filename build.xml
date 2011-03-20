@@ -70,6 +70,7 @@
 				<attribute name="Build-Date" value="${TODAY}" />
 			</manifest>
 		</jar>
+		<!-- keytool -genkey -keystore sno.jks -alias sno -storepass snoapplet -validity 3650 -keysize 2048 -keyalg RSA -->
 		<signjar alias="sno" jar="${build}/sno.jar" keystore="${lib}/sno.jks" storepass="snoapplet" />
 	</target>
 

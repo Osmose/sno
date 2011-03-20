@@ -21,9 +21,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -43,9 +40,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -65,9 +59,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -87,9 +78,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -107,9 +95,6 @@ public class Branching {
 			int origPC = CPU.pc.getValue();
 			CPU.pc.add(CPU.dataReg.getValue());
 			
-			if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-				cycles++;
-			}
 			return cycles;
 		}
 	};
@@ -141,9 +126,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -164,9 +146,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -186,9 +165,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}
@@ -208,9 +184,6 @@ public class Branching {
 				CPU.pc.add(CPU.dataReg.getValue());
 				
 				cycles++;
-				if (CPU.emulationMode && (origPC/CPU.PAGE_SIZE != CPU.pc.getValue() / CPU.PAGE_SIZE)) {
-					cycles++;
-				}
 			}
 			return cycles;
 		}

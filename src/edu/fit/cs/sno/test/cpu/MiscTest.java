@@ -40,7 +40,7 @@ public class MiscTest {
 		assertFalse(CPU.emulationMode);
 		assertEquals(0, CPU.pbr.getValue());
 		assertEquals(0, CPU.pc.getValue());
-		assertEquals(0, CPU.sp.getValue());
+		assertEquals(0x01FF, CPU.sp.getValue());
 		assertEquals(0, CPU.status.getValue());
 		assertFalse(CPU.indexCrossedPageBoundary);
 	}

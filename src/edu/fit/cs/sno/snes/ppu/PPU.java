@@ -20,6 +20,8 @@ public class PPU {
 		bg[1] = new Background(2);
 		bg[2] = new Background(3);
 		bg[3] = new Background(4);
+		
+		init();
 	}
 	
 	public static boolean screenBlank = false;

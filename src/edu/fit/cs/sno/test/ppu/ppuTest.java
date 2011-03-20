@@ -2,6 +2,7 @@ package edu.fit.cs.sno.test.ppu;
 
 
 import org.junit.Before;
+import org.junit.Test;
 
 public class ppuTest {
 
@@ -10,4 +11,8 @@ public class ppuTest {
 		
 	}
 
+	@Test
+	public void freePass() {
+
+	}
 }
