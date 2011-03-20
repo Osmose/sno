@@ -11,13 +11,16 @@ import edu.fit.cs.sno.util.Settings;
 
 public class Timing {
 	static final long TARGET_SPEED = 21477272; // 21.477MHz Master Clock
-	static final long cycleTimeNS = (long)((1.0/TARGET_SPEED) * 1000000000.0f);
+	public static final long cycleTimeNS = (long)((1.0/TARGET_SPEED) * 1000000000.0f);
 	
 	static long totalCycles = 0;        // Total master cycles that have been run
 	static boolean limitSpeed = false;  // Whether or not to limit the speed of execution
 	static long lastTime = 0;           // The last time in nanoseconds we last did a cycle
+	
+	static boolean autoFrameSkip = false;
 	static {
 		limitSpeed = Settings.get(Settings.CPU_LIMIT_SPEED).equals("true");
+		autoFrameSkip = Settings.get(Settings.AUTO_FRAME_SKIP).equals("true");
 	}
 
 	static long sinceLastScanline = 0;
@@ -114,6 +117,17 @@ public class Timing {
 			} while(sleep>cycleTimeNS);
 			lastTime = System.nanoTime();
 			cyclesToCatchup = 0;
+		}
+		
+		//How long should this have taken
+		if (autoFrameSkip) {
+			long duration = numCycles*cycleTimeNS;
+			long actualDuration = System.nanoTime() - lastTime;
+			if (actualDuration > duration) {
+				PPU.renderFrames = false;
+			} else {
+				PPU.renderFrames = true;
+			}
 		}
 	}
 

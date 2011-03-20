@@ -9,6 +9,7 @@ import edu.fit.cs.sno.snes.apu.ops.Move;
 import edu.fit.cs.sno.snes.apu.ops.SixteenBit;
 import edu.fit.cs.sno.snes.common.Register;
 import edu.fit.cs.sno.snes.common.Size;
+import edu.fit.cs.sno.snes.cpu.Timing;
 import edu.fit.cs.sno.util.Log;
 import edu.fit.cs.sno.util.Settings;
 
@@ -34,13 +35,13 @@ public class APU {
 	public static int data;
 	public static int dataAddr;
 	
-	public static Timer t0 = new Timer(128);
-	public static Timer t1 = new Timer(128);
+	public static Timer t0 = new Timer(125);
+	public static Timer t1 = new Timer(125);
 	public static Timer t2 = new Timer(16);
 	
 	private static long totalCycles = 0;
 	private static long lastTime;
-	private static final long targetSpeed = 1024000; // Clocked at ~1MhZ
+	private static final long targetSpeed = 1000*1000; // Clocked at ~1MhZ
 	private static final long cycleTimeNS = (long)((1.0/targetSpeed) * 1000000000.0f);
 	
 	public static boolean limitSpeed = Settings.get(Settings.CPU_LIMIT_SPEED).equals("true");
@@ -512,7 +513,8 @@ public class APU {
 	
 	public static void cycle(int cycles) {
 		// Each cycle appears to be 24 master cycles - NOT SURE, BUT GOING WITH IT
-		int cyclesPassed = 24 * cycles;
+		// int cyclesPassed = 24 * cycles;
+		int cyclesPassed = cycles;
 		totalCycles += cyclesPassed;
 		
 		// Process timers
@@ -520,13 +522,21 @@ public class APU {
 		t1.passCycles(cyclesPassed);
 		t2.passCycles(cyclesPassed);
 		
-		if (limitSpeed) {
+		if (true || limitSpeed) {
 			long sleep, elapsed;
 			do {
 				elapsed = System.nanoTime() - lastTime;
 				sleep = (cycles * cycleTimeNS) - elapsed;
 			} while(sleep > cycleTimeNS);
 			lastTime = System.nanoTime();
+		}
+		
+		while(totalCycles*cycleTimeNS > Timing.getCycles()*Timing.cycleTimeNS) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
