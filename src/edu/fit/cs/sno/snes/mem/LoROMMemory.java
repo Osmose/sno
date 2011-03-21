@@ -19,13 +19,13 @@ public class LoROMMemory extends Memory {
 			} else if (addr >= 0x8000) { // ROM Chunks
 				return getFromArray(size, rom, (bank*0x8000) + (addr-0x8000));
 			}
-		} else if (Util.inRange(bank, 0x40, 0x7C)) {	// ROM chunks
+		} else if (Util.inRange(bank, 0x40, 0x6F)) {	// ROM chunks
 			if (addr >= 0x8000) {
 				return getFromArray(size, rom, (bank*0x8000) + (addr-0x8000));
 			}
-		} else if (bank == 0x7D) {	// SRAM, ROM
+		} else if (Util.inRange(bank, 0x70, 0x7D)) {	// SRAM, ROM
 			if (addr < 0x8000) {
-				return 0;
+				return getFromArray(size, sram, ((bank - 0x70) * 0x8000) + addr);
 			} else {
 				return getFromArray(size, rom, (bank*0x8000) + (addr-0x8000));
 			}
@@ -69,7 +69,10 @@ public class LoROMMemory extends Memory {
 				invalidMemoryWrite("ROM", bank, addr);
 			}
 		} else if (bank == 0x7D) {	// SRAM, ROM
-			if (addr >= 0x8000) {
+			if (addr < 0x8000) {
+				sram[addr] = val;
+				return;
+			} else {
 				invalidMemoryWrite("ROM", bank, addr);
 			}
 		} else if (bank == 0x7E) {	// WRAM

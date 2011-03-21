@@ -1,5 +1,6 @@
 package edu.fit.cs.sno.snes;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -99,6 +100,12 @@ public class Core {
 		init(is, isZip);
 		instCount = 0;
 		maxInstructions = Long.parseLong(Settings.get(Settings.CORE_MAX_INSTRUCTIONS));
+		
+		// Load save file if found
+		File save = new File(Settings.get(Settings.SAVE_PATH));
+		if (save != null) {
+			mem.loadSram(new FileInputStream(save));
+		}
 		
 		// Execute and time game
 		if (Log.instruction.enabled() && Settings.get(Settings.CPU_ALT_DEBUG)=="false") {

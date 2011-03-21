@@ -161,4 +161,8 @@ public class Util {
 		return newVal;
 	}
 
+	@SuppressWarnings("unused")
+	public static void brk() {
+		int a = 1;
+	}
 }
