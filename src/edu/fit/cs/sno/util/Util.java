@@ -184,4 +184,8 @@ public class Util {
 	public static void brk() {
 		int a = 1;
 	}
+	@SuppressWarnings("unused")
+	public static void brk() {
+		int a = 1;
+	}
 }
