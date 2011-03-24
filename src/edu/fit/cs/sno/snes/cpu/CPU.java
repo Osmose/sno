@@ -35,6 +35,7 @@ import edu.fit.cs.sno.snes.cpu.instructions.Subtract;
 import edu.fit.cs.sno.snes.cpu.instructions.TestBits;
 import edu.fit.cs.sno.snes.cpu.instructions.Transfer;
 import edu.fit.cs.sno.snes.debug.CPUState;
+import edu.fit.cs.sno.snes.ppu.PPU;
 import edu.fit.cs.sno.util.Log;
 import edu.fit.cs.sno.util.Settings;
 import edu.fit.cs.sno.util.Util;
@@ -70,6 +71,20 @@ public class CPU {
 	public static int vtime = 0x1FF;
 	public static boolean irqFlag = false;
 	
+	/**
+	 * IRQ Enable
+	 * 0 = No IRQ
+	 * 1 = IRQ on htime
+	 * 2 = IRQ on vtime
+	 * 3 = IRQ on vtime and htime (at the same time)
+	 */
+	public static int irqEnable = 0;
+	public static final int IRQ_V = 2;
+	public static final int IRQ_H = 1;
+	public static final int IRQ_VH = 3;
+	
+	
+	public static boolean intIRQ = false;	// If true, next cycle performs an IRQ
 	private static boolean intVBlank;
 	
 	private static boolean tracingEnabled;
@@ -94,7 +109,7 @@ public class CPU {
 		
 		indexCrossedPageBoundary = false;
 		
-		tracingEnabled = Settings.get(Settings.CPU_DEBUG_TRACE).equals("true");
+		tracingEnabled = Settings.isTrue(Settings.CPU_DEBUG_TRACE);
 	}
 	
 	public static Instruction[] jmp = new Instruction[0x100];	// Jump Table
@@ -433,6 +448,13 @@ public class CPU {
 		intVBlank = true;
 	}
 	
+	/**
+	 * When run, next instruction cycle triggers an IRQ;
+	 */
+	public static void triggerIRQ() {
+		intIRQ = true;
+	}
+	
 	public static boolean checkInterrupts() {
 		if (NMIEnable && intVBlank) {
 			if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
@@ -451,6 +473,28 @@ public class CPU {
 			intVBlank = false;
 			
 			return true;
+		} else if (intIRQ) {
+			intIRQ = false;
+			if (!status.isIrqDisable()) {
+				if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
+					Log.debug("Running irq handler: " + Integer.toHexString(Core.mem.get(Size.SHORT, 0, 0xFFEE)));
+				} else {
+					Log.instruction("*** IRQ");
+				}
+				
+				irqFlag = true;
+				stackPush(Size.BYTE,  status.getValue());
+				stackPush(Size.BYTE,  pbr.getValue());
+				stackPush(Size.SHORT, pc.getValue());
+				pbr.setValue(0);
+				
+				if (!CPU.emulationMode)
+					pc.setValue(Core.mem.read(Size.SHORT, 0, 0xFFEE));
+				else
+					pc.setValue(Core.mem.read(Size.SHORT, 0, 0xFFFE));
+				
+				return true;
+			}
 		}
 		
 		return false;

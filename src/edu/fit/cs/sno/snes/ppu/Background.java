@@ -14,6 +14,8 @@ import edu.fit.cs.sno.util.Settings;
 public class Background {
 	public int num;
 	public boolean tile16px;
+	public int tileWidth = 8;
+	public int tileHeight = 8;
 	public int baseAddress;
 	
 	public boolean mosaic;
@@ -83,12 +85,10 @@ public class Background {
 		}
 	}
 	
-	public int getTileWidth() {
-		return (tile16px ? 16 : 8);
-	}
-	
-	public int getTileHeight() {
-		return (tile16px ? 16 : 8);
+	public void setTileSize(boolean tileSize) {
+		tile16px = tileSize;
+		tileWidth = tile16px ? 16 : 8;
+		tileHeight = tileWidth;
 	}
 
 	public void setHScroll(int scrollvalue) {
@@ -104,7 +104,7 @@ public class Background {
 	 */
 	public void nextScanline() {
 		// Mod to wrap scrolling
-		y = (y + 1) % (size.height * getTileHeight());
+		y = (y + 1) % (size.height * tileHeight);
 		x = getHScroll();
 		loadTile();
 	}
@@ -115,8 +115,8 @@ public class Background {
 	 */
 	public void loadTile() {
 		// Get x/y position of the tile we want
-		int xTilePos = x / getTileWidth();
-		int yTilePos = y / getTileHeight();
+		int xTilePos = x / tileWidth;
+		int yTilePos = y / tileHeight;
 		
 		// Tile is relative to base address
 		tileAddr = tileMapAddress;
@@ -145,8 +145,8 @@ public class Background {
 
 		// yOffset is the number of bytes we have to skip to get to the correct
 		// line for rendering a tile. Each horizontal line in a character is 2 bytes long
-		int yOffset = ((y % getTileHeight()) * 2);
-		yOffset = ((tile & 0x8000) != 0 ? ((getTileHeight() * 2) - yOffset - 2) : yOffset);	// Vertical flip
+		int yOffset = ((y % tileHeight) * 2);
+		yOffset = ((tile & 0x8000) != 0 ? ((tileHeight * 2) - yOffset - 2) : yOffset);	// Vertical flip
 		
 		// Base address for character data
 		characterAddr = baseAddress + (8 * colorMode.bitDepth * (tile & 0x3FF));
@@ -172,13 +172,13 @@ public class Background {
 		int index = 0;
 		
 		// Determine x offset for pixel we want
-		int pixelX = x % getTileWidth();
+		int pixelX = x % tileWidth;
 		if ((tile & 0x4000) != 0) { // Horizontal flip
-			pixelX = getTileWidth() - pixelX -1;
+			pixelX = tileWidth - pixelX -1;
 		}
 		
 		// Grab the pixel
-		int xMask = 0x80 >> pixelX;
+		int xMask = 0x80 >> (pixelX % 8);
 		switch (colorMode) {
 			case Color4:
 				index |= ((PPU.vram[characterAddr] & xMask) != 0) ? 0x1 : 0;
@@ -223,7 +223,7 @@ public class Background {
 		}
 		
 		// Move to next pixel, wrapping in case we scrolled off the edge of the screen
-		x = (x + 1) % (size.width*getTileWidth());
+		x = (x + 1) % (size.width*tileWidth);
 		
 		// If we have processed 8 pixels (or 16 for a 16x16 tile),
 		// move to the next tile.
@@ -247,11 +247,11 @@ public class Background {
 	
 	// Scrolls a value for display on the screen
 	private int getHScroll() {
-		return (this.hscroll & 0x03FF) % (size.width*getTileWidth());// only 10 bits count
+		return (this.hscroll & 0x03FF) % (size.width*tileWidth);// only 10 bits count
 	}
 	
 	private int getVScroll() {
-		return vscroll & 0x03FF % (size.height*getTileHeight());// only 10 bits count
+		return vscroll & 0x03FF % (size.height*tileHeight);// only 10 bits count
 	}
 	
 	public boolean enabled() {

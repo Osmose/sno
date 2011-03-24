@@ -24,10 +24,10 @@ public class BGRegisters {
 			//if (mode1BG3Priority) Debug.Log("BG3 Priority");
 			//else Debug.log("BG1 Priority");
 			
-			PPU.bg[0].tile16px = bg1Size;
-			PPU.bg[1].tile16px = bg2Size;
-			PPU.bg[2].tile16px = bg3Size;
-			PPU.bg[3].tile16px = bg4Size;
+			PPU.bg[0].setTileSize(bg1Size);
+			PPU.bg[1].setTileSize(bg2Size);
+			PPU.bg[2].setTileSize(bg3Size);
+			PPU.bg[3].setTileSize(bg4Size);
 			
 			if (bg1Size) Log.debug("Setting BG1 Size to 16x16");
 			else         Log.debug("Setting BG1 Size to 8x8");

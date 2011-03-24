@@ -28,6 +28,10 @@ public class CPURegisters {
 				}
 			}
 			
+			// IRQEnable
+			CPU.irqEnable = (val >> 4) & 0x03;
+			Log.debug("IRQ Enable set to " + CPU.irqEnable);
+			
 			// Standard Controller Enable
 			temp = (value & 0x01) == 0x01;
 			if (temp != CPU.standardControllerRead) {

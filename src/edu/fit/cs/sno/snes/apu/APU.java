@@ -44,7 +44,7 @@ public class APU {
 	private static final long targetSpeed = 1000*1000; // Clocked at ~1MhZ
 	private static final long cycleTimeNS = (long)((1.0/targetSpeed) * 1000000000.0f);
 	
-	public static boolean limitSpeed = Settings.get(Settings.CPU_LIMIT_SPEED).equals("true");
+	public static boolean limitSpeed = Settings.isTrue(Settings.CPU_LIMIT_SPEED);
 	
 	public static void init() {
 		pc = new Register(Size.SHORT, 0);
@@ -532,11 +532,7 @@ public class APU {
 		}
 		
 		while(totalCycles*cycleTimeNS > Timing.getCycles()*Timing.cycleTimeNS) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			
 		}
 	}
 	

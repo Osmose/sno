@@ -226,9 +226,10 @@ public class OAM {
 		}
 	}
 	
-	public static void brk() {
-		int a = 1;
-		int b = a;
+	public static void dumpTiles() {
+		for (int k = 0; k < numTiles; k++) {
+			System.out.println(curTiles[k].toString());
+		}
 	}
 	
 	public static void resetOAMAddress() {

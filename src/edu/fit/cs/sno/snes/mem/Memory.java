@@ -2,13 +2,14 @@ package edu.fit.cs.sno.snes.mem;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import edu.fit.cs.sno.snes.apu.hwregs.APURegisters;
 import edu.fit.cs.sno.snes.common.Size;
 import edu.fit.cs.sno.snes.cpu.Timing;
-import edu.fit.cs.sno.snes.cpu.hwregs.CPURegisters;
 import edu.fit.cs.sno.snes.cpu.hwregs.CPUMath;
+import edu.fit.cs.sno.snes.cpu.hwregs.CPURegisters;
 import edu.fit.cs.sno.snes.cpu.hwregs.DMA;
 import edu.fit.cs.sno.snes.ppu.hwregs.BGRegisters;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
@@ -18,10 +19,12 @@ import edu.fit.cs.sno.snes.ppu.hwregs.VRAM;
 import edu.fit.cs.sno.snes.ppu.hwregs.WindowRegisters;
 import edu.fit.cs.sno.util.Log;
 import edu.fit.cs.sno.util.Settings;
+import edu.fit.cs.sno.util.Util;
 
 public abstract class Memory {
 	protected Boolean isHiROM;
 	protected int[] wram = new int[128 * 1024];
+	protected int[] sram = new int[0x40000];
 	protected int[] rom; // 0x80 chunks of 32k
 	
 	public abstract int get(Size size, int bank, int addr);
@@ -291,6 +294,18 @@ public abstract class Memory {
 
 	public void setRom(int[] rom) {
 		this.rom = rom;
+	}
+	
+	public void loadSram(InputStream s) {
+		int k = 0, v;
+		try {
+			while (k < sram.length && (v = s.read()) != -1) {
+				sram[k] = v;
+				k++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected void invalidMemoryWrite(String type, int bank, int addr) throws RuntimeException {

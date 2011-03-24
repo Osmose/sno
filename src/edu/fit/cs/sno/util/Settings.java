@@ -14,19 +14,9 @@ public class Settings {
 	public static void init() {
 		if (loaded) return;
 		try {
-			props.load(new FileInputStream("sno.properties"));
-			loaded = true;
-		} catch (Exception err) {
-			// Do nothing for now
-		}
-	}
-	
-	public static void initFromJar() {
-		if (loaded) return;
-		try {
 			props.load(Settings.class.getResourceAsStream("/sno.properties"));
 			loaded = true;
-		} catch (Exception e) {
+		} catch (Exception err) {
 			// Do nothing for now
 		}
 	}
@@ -88,6 +78,7 @@ public class Settings {
 	public static final String MUTE_SOUND = "sno.applet.mute";
 	public static final String DEBUG_OUT = "sno.cpu.debugOut";
 	public static final String ROM_URL = "sno.rom.url";
+	public static final String SAVE_PATH = "sno.save.file";
 	
 	
  

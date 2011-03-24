@@ -1,10 +1,9 @@
 package edu.fit.cs.sno.util;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.awt.image.RescaleOp;
+import java.io.InputStream;
+import java.net.URL;
 
+import edu.fit.cs.sno.applet.SNOApplet;
 import edu.fit.cs.sno.snes.common.Size;
 
 
@@ -160,5 +159,29 @@ public class Util {
 		
 		return newVal;
 	}
+	
+	public static InputStream getStreamFromUrl(String loc) {
+		InputStream is = null;
+		try {
+			URL url;
+			if (loc.startsWith("http://")) { // Check for absolute URL
+				url = new URL(loc);
+			} else if (SNOApplet.instance != null) {
+				url = new URL(SNOApplet.instance.getDocumentBase(), loc);
+			} else {
+				return null;
+			}
+			
+			is = url.openStream();
+		} catch (Exception err) {
+			System.out.println("Failed loading from url: " + loc);
+		}
+		
+		return is;
+	}
 
+	@SuppressWarnings("unused")
+	public static void brk() {
+		int a = 1;
+	}
 }

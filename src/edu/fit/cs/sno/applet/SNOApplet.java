@@ -6,6 +6,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -25,11 +27,13 @@ import edu.fit.cs.sno.snes.apu.APU;
 import edu.fit.cs.sno.snes.apu.APUMemory;
 import edu.fit.cs.sno.snes.apu.APURunnable;
 import edu.fit.cs.sno.snes.input.Input;
+import edu.fit.cs.sno.snes.ppu.OAM;
 import edu.fit.cs.sno.snes.ppu.PPU;
 import edu.fit.cs.sno.snes.ppu.Sprites;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
 import edu.fit.cs.sno.util.Log;
 import edu.fit.cs.sno.util.Settings;
+import edu.fit.cs.sno.util.Util;
 
 public class SNOApplet extends JApplet implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -82,20 +86,8 @@ public class SNOApplet extends JApplet implements ActionListener {
 			System.out.println("Loading from url: " + loc);
 			
 			// Attempt to load from url
-			InputStream is = null;
+			InputStream is = Util.getStreamFromUrl(loc);
 			boolean isZip = loc.endsWith(".zip");
-			try {
-				URL url;
-				if (loc.startsWith("http://")) { // Check for absolute URL
-					url = new URL(loc);
-				} else {
-					url = new URL(getDocumentBase(), loc);
-				}
-				
-				is = url.openStream();
-			} catch (Exception err) {
-				System.out.println("Failed loading from url: " + loc);
-			}
 			
 			if (is != null) {
 				runGame(is, isZip);
@@ -105,7 +97,6 @@ public class SNOApplet extends JApplet implements ActionListener {
 	
 	private void runGame(InputStream is, boolean isZip) {
 		try {
-			Settings.initFromJar();
 			coreThread = new Thread(new CoreRunnable(is, isZip));
 			apuThread = new Thread(new APURunnable());
 			coreThread.start();
@@ -707,6 +698,10 @@ public class SNOApplet extends JApplet implements ActionListener {
 		JMenuItem debugToggleLog = new JMenuItem("Toggle Logging");
 		debugToggleLog.addActionListener(this);
 		debugMenu.add(debugToggleLog);
+		
+		JMenuItem debugDumpTiles = new JMenuItem("Dump Tiles");
+		debugDumpTiles.addActionListener(this);
+		debugMenu.add(debugDumpTiles);
 
 		menubar.add(fileMenu);
 		menubar.add(debugMenu);
@@ -803,6 +798,8 @@ public class SNOApplet extends JApplet implements ActionListener {
 			CGRAM.outputHexColors();
 		} else if (e.getActionCommand().equals("Toggle Logging")) {
 			Log.setLogEnabled(!Log.enabled);
+		} else if (e.getActionCommand().equals("Dump Tiles")) {
+			OAM.dumpTiles();
 		}
 
 	}

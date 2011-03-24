@@ -19,8 +19,8 @@ public class Timing {
 	
 	static boolean autoFrameSkip = false;
 	static {
-		limitSpeed = Settings.get(Settings.CPU_LIMIT_SPEED).equals("true");
-		autoFrameSkip = Settings.get(Settings.AUTO_FRAME_SKIP).equals("true");
+		limitSpeed = Settings.isTrue(Settings.CPU_LIMIT_SPEED);
+		autoFrameSkip = Settings.isTrue(Settings.AUTO_FRAME_SKIP);
 	}
 
 	static long sinceLastScanline = 0;
@@ -34,6 +34,8 @@ public class Timing {
 	
 	static ArrayList<TimerCallback> callbacks = new ArrayList<TimerCallback>();
 	static ArrayList<TimerCallback> toremove = new ArrayList<TimerCallback>();
+	
+	private static boolean irqOnCurrentLine = false; // Tracks if an IRQ occurred on the current scanline
 	
 	public static void cycle(long numCycles) {
 		totalCycles += numCycles;
@@ -53,11 +55,16 @@ public class Timing {
 		// Run PPU
 		PPU.renderCycles(numCycles);
 		
+		// Handle IRQ check
+		checkIRQ();
+		
+		
 		// Reset the cycles into this scanline counter, incrementing
 		// the current scanline
 		while (sinceLastScanline > cyclesPerScanLine) {
 			sinceLastScanline -= cyclesPerScanLine;
 			currentScanline++;
+			irqOnCurrentLine = false;
 			PPU.scanline();
 			DMA.HDMARun();
 			
@@ -133,6 +140,28 @@ public class Timing {
 
 	public static long getCycles() {
 		return totalCycles;
+	}
+	
+	public static void checkIRQ() {
+		if (!irqOnCurrentLine) {
+			boolean doIRQ = false;
+			switch (CPU.irqEnable) {
+				case CPU.IRQ_V:
+					doIRQ = currentScanline == CPU.vtime;
+					break;
+				case CPU.IRQ_H:
+					doIRQ = PPU.x >= CPU.htime;
+					break;
+				case CPU.IRQ_VH:
+					doIRQ = PPU.x >= CPU.htime && currentScanline == CPU.vtime;
+					break;
+			}
+			
+			if (doIRQ) {
+				irqOnCurrentLine = true;
+				CPU.triggerIRQ();
+			}
+		}
 	}
 	
 	public static void addTimer(long repeatEvery) {

@@ -25,4 +25,11 @@ public class SpriteTile {
 		
 		return val;
 	}
+
+	@Override
+	public String toString() {
+		return "SpriteTile [\n\taddr=" + addr + ", \n\tx=" + x + ", \n\ty=" + y + ", \n\tpriority=" + priority
+				+ ", \n\tpaletteOffset=" + paletteOffset + ", \n\thflip=" + hflip + ", \n\tvflip=" + vflip
+				+ ", \n\tenabled=" + enabled + "\n]";
+	}
 }
