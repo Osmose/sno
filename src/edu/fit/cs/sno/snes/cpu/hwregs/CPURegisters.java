@@ -29,7 +29,7 @@ public class CPURegisters {
 			}
 			
 			// IRQEnable
-			CPU.irqEnable = (val >> 4) & 0x03;
+			CPU.irqEnable = (value >> 4) & 0x03;
 			Log.debug("IRQ Enable set to " + CPU.irqEnable);
 			
 			// Standard Controller Enable
@@ -43,25 +43,6 @@ public class CPURegisters {
 						Log.debug("Disabling automatic reading of standard controller");
 				}
 			}
-			
-			// Timer Enable
-			boolean vtemp = ((value >> 5) & 0x01) == 0x01;
-			boolean htemp = ((value >> 4) & 0x01) == 0x01;
-			if (vtemp != CPU.timerV) {
-				CPU.timerV = vtemp;
-				if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
-					if(CPU.timerV) Log.debug("Enabling V-Count timer");
-					else Log.debug("Disabling V-Count timer");
-				}
-			}
-			if (htemp != CPU.timerH) {
-				CPU.timerH = htemp;
-				if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
-					if(CPU.timerH) Log.debug("Enabling H-Count timer");
-					else Log.debug("Disabling H-Count timer");
-				}
-			}
-			// No need to save the value into val.
 		};
 		@Override
 		public void onRead() {

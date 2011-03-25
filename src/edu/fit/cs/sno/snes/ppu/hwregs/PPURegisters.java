@@ -125,6 +125,7 @@ public class PPURegisters {
 		public int getValue() {
 			int val = 0;
 			val |= (PPU.vBlanking ? 0x80 : 0);
+			val |= ((PPU.x>274 || PPU.x<1) ? 0x40 : 0);
 			// TODO: hblank status
 			// TODO: auto-joypad read status
 			
