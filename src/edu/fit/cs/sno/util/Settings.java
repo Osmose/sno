@@ -79,7 +79,6 @@ public class Settings {
 	public static final String DEBUG_OUT = "sno.cpu.debugOut";
 	public static final String ROM_URL = "sno.rom.url";
 	public static final String SAVE_PATH = "sno.save.file";
-	public static final String SAVE_PATH = "sno.save.file";
 	
 	
  
