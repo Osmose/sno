@@ -28,6 +28,7 @@ import edu.fit.cs.sno.snes.CoreRunnable;
 import edu.fit.cs.sno.snes.apu.APU;
 import edu.fit.cs.sno.snes.apu.APUMemory;
 import edu.fit.cs.sno.snes.apu.APURunnable;
+import edu.fit.cs.sno.snes.cpu.CPU;
 import edu.fit.cs.sno.snes.input.Input;
 import edu.fit.cs.sno.snes.ppu.OAM;
 import edu.fit.cs.sno.snes.ppu.PPU;
@@ -704,6 +705,9 @@ public class SNOApplet extends JApplet implements ActionListener {
 		JMenuItem debugDumpTiles = new JMenuItem("Dump Tiles");
 		debugDumpTiles.addActionListener(this);
 		debugMenu.add(debugDumpTiles);
+		JMenuItem debugDisableIRQ = new JMenuItem("Toggle IRQ");
+		debugDisableIRQ.addActionListener(this);
+		debugMenu.add(debugDisableIRQ);
 
 		menubar.add(fileMenu);
 		menubar.add(debugMenu);
@@ -802,6 +806,8 @@ public class SNOApplet extends JApplet implements ActionListener {
 			Log.setLogEnabled(!Log.enabled);
 		} else if (e.getActionCommand().equals("Dump Tiles")) {
 			OAM.dumpTiles();
+		} else if (e.getActionCommand().equals("Toggle IRQ")) {
+			CPU.userDisableIRQ = !CPU.userDisableIRQ;
 		}
 
 	}

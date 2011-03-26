@@ -83,6 +83,8 @@ public class CPU {
 	public static final int IRQ_H = 1;
 	public static final int IRQ_VH = 3;
 	
+	public static boolean userDisableIRQ = false;
+	
 	
 	public static boolean intIRQ = false;	// If true, next cycle performs an IRQ
 	private static boolean intVBlank;
@@ -452,7 +454,7 @@ public class CPU {
 	 * When run, next instruction cycle triggers an IRQ;
 	 */
 	public static void triggerIRQ() {
-		intIRQ = true;
+		intIRQ = !userDisableIRQ;
 	}
 	
 	public static boolean checkInterrupts() {
