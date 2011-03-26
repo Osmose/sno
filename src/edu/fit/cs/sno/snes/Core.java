@@ -112,9 +112,11 @@ public class Core {
 		}
 		
 		// Load save file if found
-		File save = new File(Settings.get(Settings.SAVE_PATH));
-		if (save != null) {
-			mem.loadSram(new FileInputStream(save));
+		if (Settings.get(Settings.SAVE_PATH) != null) {
+			File save = new File(Settings.get(Settings.SAVE_PATH));
+			if (save != null) {
+				mem.loadSram(new FileInputStream(save));
+			}
 		}
 		
 		// Execute and time game
