@@ -46,6 +46,18 @@ public class Misc {
 	};
 	
 	/**
+	 * WDM - Reserved for Future Expansion
+	 * 0x42
+	 */
+	public static Instruction wdm = new Instruction() {
+		{this.mnemonic = "WDM";}
+		@Override
+		public int run(int[] args) {
+			return 0;
+		}
+	};
+	
+	/**
 	 * Exchange the B and A accumulators
 	 * 0xEB
 	 */ 

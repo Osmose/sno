@@ -429,6 +429,7 @@ public class CPU {
 		// Miscellaneous Instructions
 		jmp[0x00] = Misc.softwareBreak;
 		jmp[0xEA] = Misc.nop;
+		jmp[0x42] = Misc.wdm;
 		jmp[0xEB] = Misc.exchangeBA;
 		jmp[0x02] = Misc.coprocessorEnable;
 		jmp[0xDB] = Misc.stopProcessor;
