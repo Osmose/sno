@@ -83,12 +83,12 @@ public class PPURegisters {
 	public static HWRegister cgadsub = new HWRegister() {
 		@Override
 		public void onWrite(int value) {
-			Screen.colorEnable[Screen.SRC_BG1] = (value & 0x01) != 0;
-			Screen.colorEnable[Screen.SRC_BG2] = (value & 0x02) != 0;
-			Screen.colorEnable[Screen.SRC_BG3] = (value & 0x04) != 0;
-			Screen.colorEnable[Screen.SRC_BG4] = (value & 0x08) != 0;
-			Screen.colorEnable[Screen.SRC_OAM] = (value & 0x10) != 0;
-			Screen.colorEnable[Screen.SRC_BACK] = (value & 0x20) != 0;
+			Screen.colorEnable[PPU.SRC_BG1] = (value & 0x01) != 0;
+			Screen.colorEnable[PPU.SRC_BG2] = (value & 0x02) != 0;
+			Screen.colorEnable[PPU.SRC_BG3] = (value & 0x04) != 0;
+			Screen.colorEnable[PPU.SRC_BG4] = (value & 0x08) != 0;
+			Screen.colorEnable[PPU.SRC_OAM] = (value & 0x10) != 0;
+			Screen.colorEnable[PPU.SRC_BACK] = (value & 0x20) != 0;
 			
 			Screen.halfMath = (value & 0x40) != 0;
 			Screen.addSub = (value & 0x80) != 0;

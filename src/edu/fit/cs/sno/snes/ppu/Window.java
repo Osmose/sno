@@ -4,40 +4,48 @@ import edu.fit.cs.sno.util.Util;
 
 public class Window {
 
+	public static final int MAIN_SCREEN = 0;
+	public static final int SUB_SCREEN = 1;
+	
 	public static int window1Left = 0;
 	public static int window1Right = 0;
 	public static int window2Left = 0;
 	public static int window2Right = 0;
 	
 	public static void maskPixel(int x) {
-		maskBG(0, x);
-		maskBG(1, x);
-		maskBG(2, x);
-		maskBG(3, x);
+		boolean spriteMask = checkSpriteMask(x);
 		
-		if (checkSpriteMask(x)) {
-			if (OAM.windowMaskMain) {
-				OAM.outMainPixel = 0;
-			}
-			
-			if (OAM.windowMaskSub) {
-				OAM.outSubPixel = 0;
-			}
+		if (maskBySource(MAIN_SCREEN, PPU.sourceMain, x, spriteMask)) {
+			PPU.colorMain = 0;
+		}
+		if (maskBySource(SUB_SCREEN, PPU.sourceMain, x, spriteMask)) {
+			PPU.colorSub = 0;
 		}
 		
 		Screen.inColorWindow = checkColorWindow(x);
 	}
 	
-	private static void maskBG(int num, int x) {
-		if (checkBackgroundMask(num, x)) {
-			if (PPU.bg[num].windowMaskMain) {
-				PPU.bg[num].outMainPixel = 0;
-			}
-			
-			if (PPU.bg[num].windowMaskSub) {
-				PPU.bg[num].outSubPixel = 0;
-			}
+	private static boolean maskBySource(int screen, int source, int x, boolean spriteMask) {
+		// Check if the source is masked
+		switch (source) {
+			case PPU.SRC_BG1:
+			case PPU.SRC_BG2:
+			case PPU.SRC_BG3:
+			case PPU.SRC_BG4:
+				boolean bgWindowMask = (source == SUB_SCREEN ? PPU.bg[source].windowMaskSub : PPU.bg[source].windowMaskMain);
+				if (bgWindowMask && checkBackgroundMask(source, x)) {
+					return true;
+				}
+				break;
+			case PPU.SRC_OAM:
+				boolean spriteWindowMask = (source == SUB_SCREEN ? OAM.windowMaskSub : OAM.windowMaskMain);
+				if (spriteWindowMask && spriteMask) {
+					return true;
+				}
+				break;
 		}
+		
+		return false;
 	}
 	
 	/**

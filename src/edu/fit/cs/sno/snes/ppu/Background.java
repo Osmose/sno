@@ -57,12 +57,6 @@ public class Background {
 	public int priority1;
 	public int curPriority;	// Priority of the current tile
 	
-	// Pixel Output
-	public int outMainPixel;
-	public int outMainPriority;
-	public int outSubPixel;
-	public int outSubPriority;
-	
 	// Which background number this is
 	public Background(int number) {
 		num = number;
@@ -204,23 +198,20 @@ public class Background {
 				break;
 		}
 		
-		// Output on main screen
-		if (mainScreen) {
-			if (index == 0) {
-				outMainPriority = 0;
-			} else {
-				outMainPriority = curPriority;
-				outMainPixel = index + tilePaletteOffset;
+		// Don't output transparent
+		if (index != 0) {
+			// Output on main screen
+			if (mainScreen && curPriority > PPU.priorityMain) {
+				PPU.priorityMain = curPriority;
+				PPU.colorMain = index + tilePaletteOffset;
+				PPU.sourceMain = num;
 			}
-		}
-		
-		// Output on subscreen
-		if (subScreen) {
-			if (index == 0) {
-				outSubPriority = 0;
-			} else {
-				outSubPriority = curPriority;
-				outSubPixel = index + tilePaletteOffset;
+			
+			// Output on subscreen
+			if (subScreen && curPriority > PPU.prioritySub) {
+				PPU.prioritySub = curPriority;
+				PPU.colorSub = index + tilePaletteOffset;
+				PPU.sourceSub = num;
 			}
 		}
 		

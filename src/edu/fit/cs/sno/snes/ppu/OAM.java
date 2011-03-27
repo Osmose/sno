@@ -30,12 +30,6 @@ public class OAM {
 	public static boolean mainScreen;
 	public static boolean subScreen;
 	
-	// Pixel output
-	public static int outMainPixel;
-	public static int outMainPriority;
-	public static int outSubPixel;
-	public static int outSubPriority;
-	
 	// Stores the 4 possible priorities for sprites
 	public static int[] priorityMap = new int[4];
 	
@@ -67,10 +61,6 @@ public class OAM {
 	public static void loadPixel() {
 		SpriteTile curTile;
 		
-		// Reset priorities
-		outMainPriority = 0;
-		outSubPriority = 0;
-		
 		// For each active tile
 		for (int k = 0; k < numTiles; k++) {
 			curTile = curTiles[k];
@@ -83,14 +73,16 @@ public class OAM {
 				// Don't draw transparent pixels
 				if (color == 0) continue;
 				
-				if (mainScreen) {
-					outMainPixel = color + curTile.paletteOffset;
-					outMainPriority = curTile.priority;
+				if (mainScreen && curTile.priority > PPU.priorityMain) {
+					PPU.colorMain = color + curTile.paletteOffset;
+					PPU.priorityMain = curTile.priority;
+					PPU.sourceMain = PPU.SRC_OAM;
 				}
 				
-				if (subScreen) {
-					outSubPixel = color + curTile.paletteOffset;
-					outSubPriority = curTile.priority;
+				if (subScreen && curTile.priority > PPU.prioritySub) {
+					PPU.colorSub = color + curTile.paletteOffset;
+					PPU.prioritySub = curTile.priority;
+					PPU.sourceSub = PPU.SRC_OAM;
 				}
 			}
 		}

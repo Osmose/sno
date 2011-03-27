@@ -12,6 +12,14 @@ import edu.fit.cs.sno.util.Settings;
 import edu.fit.cs.sno.util.Util;
 
 public class PPU {
+	// Output pixel source constants
+	public static final int SRC_BG1 = 0;
+	public static final int SRC_BG2 = 1;
+	public static final int SRC_BG3 = 2;
+	public static final int SRC_BG4 = 3;
+	public static final int SRC_OAM = 4;
+	public static final int SRC_BACK = 5;
+	
 	// Memory declarations
 	public static int vram[] = new int[64*1024]; // Video RAM
 	public static Background bg[] = new Background[4];
@@ -47,6 +55,18 @@ public class PPU {
 	public static long unprocessedCycles;
 	public static int x;
 	public static int y;
+	
+	// Color value that will be output for the next pixel
+	public static int colorMain;
+	public static int colorSub;
+	
+	// Priority of main and subscreen colors
+	public static int priorityMain;
+	public static int prioritySub;
+	
+	// Source of the colors
+	public static int sourceMain;
+	public static int sourceSub;
 	
 	// Whether or not to actually render the frames
 	public static boolean renderFrames = true;
@@ -181,8 +201,16 @@ public class PPU {
 				
 				// Only draw pixels 22 - 277
 				if (Util.inRange(x, 22, 277) && (renderFrames || (!renderFrames && skipCount==0))) {
-					// loadPixel processes the current pixel and sets
-					// the output on each BG and OAM to the correct pixel
+					// Init output to the background color
+					colorMain = 0;
+					priorityMain = 0;
+					sourceMain = SRC_BACK;
+					
+					colorSub = 0;
+					prioritySub = 0;
+					sourceSub = SRC_BACK;
+					
+					// loadPixel processes the current pixel and sets the output to the correct pixel
 					bg[0].loadPixel();
 					bg[1].loadPixel();
 					bg[2].loadPixel();
@@ -192,7 +220,7 @@ public class PPU {
 					// Mask out pixels
 					Window.maskPixel(x - 22);
 					
-					// Screen then combines the output of everything into a single color
+					// Screen then combines the output into a single color
 					int color = Screen.doPixel(x - 22);
 					
 					// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
