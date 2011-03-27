@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import edu.fit.cs.sno.snes.mem.HWRegister;
 import edu.fit.cs.sno.snes.ppu.PPU;
+import edu.fit.cs.sno.snes.ppu.SNESColor;
 import edu.fit.cs.sno.util.Settings;
 
 public class CGRAM {
@@ -19,7 +20,27 @@ public class CGRAM {
 	public static Color transparent = new Color(0, 0, 0, 0);
 	public static int fixedColor = 0;
 	
+	// Caches colors; First index is brightness, second is SNES color
+	public static int[][] cachedColors = new int[16][0x8000];
+	
 	private static boolean lowByte = true;
+	
+	public static int snesColorToARGB(int snesColor, int brightness) {
+		int argbColor = cachedColors[brightness][snesColor];
+		if (argbColor == 0) {
+			// Convert the SNES-format color (integer in the form bbbbbgggggrrrrr, b = blue bits, g = green bits,
+			// r = red bits) to an ARGB format color
+			int r, g, b;
+			r = ((int) (SNESColor.getColor(snesColor, SNESColor.RED) * (brightness / 15f)) & 0x1F) << 19;
+			g = ((int) (SNESColor.getColor(snesColor, SNESColor.GREEN) * (brightness / 15f)) & 0x1F) << 11;
+			b = ((int) (SNESColor.getColor(snesColor, SNESColor.BLUE) * (brightness / 15f)) & 0x1F) << 3;
+			argbColor = (0xFF << 24) | r | g | b;
+			
+			cachedColors[brightness][snesColor] = argbColor;
+		}
+		
+		return argbColor;
+	}
 	
 	public static int getColor(int index) {
 		index <<= 1;

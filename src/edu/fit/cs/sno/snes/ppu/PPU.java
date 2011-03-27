@@ -28,7 +28,7 @@ public class PPU {
 	}
 	
 	public static boolean screenBlank = false;
-	public static float brightness = 1;
+	public static int brightness = 1;
 	public static boolean vBlanking = false;
 	
 	public static int mode = 0;
@@ -104,8 +104,8 @@ public class PPU {
 		screenBlank = blank;
 	}
 
-	public static void setBrightness(float i) {
-		brightness = (i / 15);
+	public static void setBrightness(int i) {
+		brightness = i;
 	}
 	
 	/**
@@ -195,16 +195,8 @@ public class PPU {
 					// Screen then combines the output of everything into a single color
 					int color = Screen.doPixel(x - 22);
 					
-					// Convert the SNES-format color (intger in the form bbbbbgggggrrrrr, b = blue bits, g = green bits,
-					// r = red bits) to an ARGB format color
-					int r, g, b, realColor;
-					r = ((int) (SNESColor.getColor(color, SNESColor.RED) * PPU.brightness) & 0x1F) << 19;
-					g = ((int) (SNESColor.getColor(color, SNESColor.GREEN) * PPU.brightness) & 0x1F) << 11;
-					b = ((int) (SNESColor.getColor(color, SNESColor.BLUE) * PPU.brightness) & 0x1F) << 3;
-					realColor = (0xFF << 24) | r | g | b;
-					
 					// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
-					screenBuffer.setRGB(x - 22, y, realColor);
+					screenBuffer.setRGB(x - 22, y, CGRAM.snesColorToARGB(color, brightness));
 				}
 
 				x++;
