@@ -44,6 +44,7 @@ public class Background {
 	// x/y position of the pixel we're currently drawing
 	private int x;
 	private int y;
+	private int baseY;
 	
 	private int tile;		// Stores the content of the current tile entry
 	private int tileAddr;	// Address of current tile
@@ -104,7 +105,8 @@ public class Background {
 	 */
 	public void nextScanline() {
 		// Mod to wrap scrolling
-		y = (y + 1) % (size.height * tileHeight);
+		baseY = (baseY + 1);
+		y = (baseY + getVScroll())  % (size.height * tileHeight);
 		x = getHScroll();
 		loadTile();
 	}
@@ -168,7 +170,7 @@ public class Background {
 	 * Loads and outputs the current pixel and increments x to move to the next
 	 * pixel in the scanline.
 	 */
-	public void loadPixel() {
+	public int loadPixel() {
 		int index = 0;
 		
 		// Determine x offset for pixel we want
@@ -232,6 +234,7 @@ public class Background {
 		} else if ((x % 16) == 8 && tile16px) {	// Move to the right half of a 16x16 tile
 			characterAddr += 8 * colorMode.bitDepth;
 		}
+		return (index==0 ? 0: index + tilePaletteOffset);
 	}
 	
 	/**
@@ -240,7 +243,8 @@ public class Background {
 	 */
 	public void vBlank() {
 		x = getHScroll();
-		y = getVScroll();
+		baseY = 0;
+		y = baseY + getVScroll() % (size.height*tileHeight);
 		
 		loadTile();
 	}
@@ -256,6 +260,46 @@ public class Background {
 	
 	public boolean enabled() {
 		return enabled && userEnabled;
+	}
+	
+	public void dumpBGImage() {
+		String baseDir = Settings.get(Settings.DEBUG_PPU_DIR);
+		int oldx = x;
+		int oldy = y;
+		
+		BufferedImage img = new BufferedImage(size.width*tileWidth, size.height*tileHeight, BufferedImage.TYPE_INT_ARGB);
+		
+		for (y=0;y<size.height*tileHeight; y++) {
+			for (x=0;x<size.width*tileWidth; x++) {
+				int ox=x;
+				int oy=y;
+				loadTile();
+				int c = CGRAM.getColor(loadPixel());
+				
+				x=ox;
+				y=oy;
+				
+				
+				int r, g, b, realColor;
+				r = ((int) SNESColor.getColor(c, SNESColor.RED) & 0x1F) << 19;
+				g = ((int) SNESColor.getColor(c, SNESColor.GREEN) & 0x1F) << 11;
+				b = ((int) SNESColor.getColor(c, SNESColor.BLUE) & 0x1F) << 3;
+				realColor = (0xFF << 24) | r | g | b;
+				
+				// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
+				img.setRGB(x, y, realColor);
+			}
+		}
+		
+		try {
+			ImageIO.write(img, "PNG", new File(baseDir + "/bg" + num + "_img.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		x = oldx;
+		y = oldy;
+		loadTile();
 	}
 	
 	public void dumpBGGraphics() {
