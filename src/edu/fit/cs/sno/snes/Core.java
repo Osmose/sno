@@ -111,14 +111,6 @@ public class Core {
 			}
 		}
 		
-		// Load save file if found
-		if (Settings.get(Settings.SAVE_PATH) != null) {
-			File save = new File(Settings.get(Settings.SAVE_PATH));
-			if (save != null) {
-				mem.loadSram(new FileInputStream(save));
-			}
-		}
-		
 		// Execute and time game
 		if (Log.instruction.enabled() && Settings.get(Settings.CPU_ALT_DEBUG)=="false") {
 			Log.instruction("====CPU Execution====");
