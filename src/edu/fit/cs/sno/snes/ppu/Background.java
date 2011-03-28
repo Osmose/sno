@@ -167,8 +167,8 @@ public class Background extends MemoryObserver {
 		// Get the pixel color
 		index = cacheChardata[(tile & 0x3FF)][pixelX][pixelY];
 		
-		// Don't output transparent
-		if (index != 0) {
+		// Don't output transparent or when we're disabled
+		if (index != 0 && userEnabled) {
 			// Output on main screen
 			if (mainScreen && curPriority > PPU.priorityMain) {
 				PPU.priorityMain = curPriority;
