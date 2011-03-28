@@ -198,8 +198,8 @@ public class Background {
 				break;
 		}
 		
-		// Don't output transparent
-		if (index != 0) {
+		// Don't output transparent or when we're disabled
+		if (index != 0 && userEnabled) {
 			// Output on main screen
 			if (mainScreen && curPriority > PPU.priorityMain) {
 				PPU.priorityMain = curPriority;

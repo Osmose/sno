@@ -70,8 +70,8 @@ public class OAM {
 			if (Util.inRange(PPU.x - 22, curTile.x, curTile.x + 7)) {
 				int color = curTile.getPixel((PPU.x - 22) - curTile.x, PPU.y - 1 - curTile.y);
 				
-				// Don't draw transparent pixels
-				if (color == 0) continue;
+				// Don't draw transparent pixels or when we're disabled
+				if (color == 0 || !userEnabled) continue;
 				
 				if (mainScreen && curTile.priority > PPU.priorityMain) {
 					PPU.colorMain = color + curTile.paletteOffset;
