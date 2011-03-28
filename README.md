@@ -28,9 +28,9 @@ SNO was originally a Senior Design project by students at Florida Institute of T
  * [Progress Evaluation](http://osmose.github.com/sno/docs/milestone4/milestone4_eval.pdf)
 
 ### Milestone 5 (March 28th)
- * Poster
- * Presentation (PPTX) (PDF)
- * Progress Evaluation
+ * [Poster](http://osmose.github.com/sno/docs/poster/poster.ppt)
+ * Presentation [(PPTX)](http://osmose.github.com/sno/docs/milestone5/milestone5_presentation.pptx) [(PDF)](http://osmose.github.com/sno/docs/milestone5/milestone5_presentation.pdf)
+ * [Progress Evaluation](http://osmose.github.com/sno/docs/milestone5/milestone5_eval.pdf)
 
 ### Milestone 6 (April 15th)
  * User Manual
