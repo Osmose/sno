@@ -800,6 +800,11 @@ public class SNOApplet extends JApplet implements ActionListener {
 			PPU.bg[1].dumpBGGraphics();
 			PPU.bg[2].dumpBGGraphics();
 			PPU.bg[3].dumpBGGraphics();
+			
+			PPU.bg[0].dumpBGImage();
+			PPU.bg[1].dumpBGImage();
+			PPU.bg[2].dumpBGImage();
+			PPU.bg[3].dumpBGImage();
 		} else if (e.getActionCommand().equals("Output Hex Colors")) {
 			CGRAM.outputHexColors();
 		} else if (e.getActionCommand().equals("Toggle Logging")) {

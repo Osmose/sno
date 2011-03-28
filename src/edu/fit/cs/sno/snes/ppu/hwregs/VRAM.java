@@ -1,6 +1,7 @@
 package edu.fit.cs.sno.snes.ppu.hwregs;
 
 import edu.fit.cs.sno.snes.mem.HWRegister;
+import edu.fit.cs.sno.snes.mem.MemoryObserver;
 import edu.fit.cs.sno.snes.ppu.PPU;
 import edu.fit.cs.sno.util.Log;
 
@@ -60,6 +61,7 @@ public class VRAM {
 		public void onWrite(int value) {
 			val = value & 0xFF;
 			PPU.vram[getVramAddress()] = val;
+			MemoryObserver.notifyObservers(getVramAddress());
 			if (!incMode) vramAddress += incVal;
 		}
 	};
@@ -72,6 +74,7 @@ public class VRAM {
 		public void onWrite(int value) {
 			val = value & 0xFF;
 			PPU.vram[getVramAddress()+1] = val;
+			MemoryObserver.notifyObservers(getVramAddress()+1);
 			if (incMode) vramAddress += incVal;
 		}
 	};

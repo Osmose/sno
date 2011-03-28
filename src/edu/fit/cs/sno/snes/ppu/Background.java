@@ -8,10 +8,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import edu.fit.cs.sno.snes.mem.MemoryObserver;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
 import edu.fit.cs.sno.util.Settings;
 
-public class Background {
+public class Background extends MemoryObserver {
 	public int num;
 	public boolean tile16px;
 	public int tileWidth = 8;
@@ -47,10 +48,17 @@ public class Background {
 	private int baseY;
 	
 	private int tile;		// Stores the content of the current tile entry
-	private int tileAddr;	// Address of current tile
+	//private int tileAddr;	// Address of current tile
 	private int tilePaletteOffset;	// Palette offset for the current tile
 	
-	private int characterAddr;	// Address of current character data
+	//private int characterAddr;	// Address of current character data
+	
+	
+	private int xTilePos=0;
+	private int yTilePos=0;
+	private int pixelY = 0;
+	private int cacheTilemap[][];
+	private int cacheChardata[][][];
 	
 	// Priority values
 	public int priority0;
@@ -62,6 +70,17 @@ public class Background {
 		num = number;
 		
 		size = BGSize.bg32x32;
+		
+		cacheTilemap = new int[64][64];
+		for (int i=0;i<64;i++)
+			for(int j=0;j<64;j++)
+				cacheTilemap[i][j] = 0;
+		cacheChardata = new int[4096][16][16]; // 1024 "tiles", size 16x16max
+		for (int i=0;i<4096;i++)
+			for(int j=0;j<16;j++)
+				for(int k=0;k<16;k++)
+					cacheChardata[i][j][k]=0;
+		MemoryObserver.addObserver(this);
 	}
 	
 	/**
@@ -72,11 +91,11 @@ public class Background {
 	private int getPaletteOffset() {
 		switch(colorMode) {
 			case Color4:
-				return ((PPU.vram[tileAddr+1] >> 2) & 0x7) * 4;
+				return ((tile >> 10) & 0x7) * 4;
 			case Color16:
-				return ((PPU.vram[tileAddr+1] >> 2) & 0x7) * 16;
+				return ((tile >> 10) & 0x7) * 16;
 			default:
-				return ((PPU.vram[tileAddr+1] >> 2) & 0x7);
+				return ((tile >> 10) & 0x7);
 		}
 	}
 	
@@ -111,48 +130,20 @@ public class Background {
 	 */
 	public void loadTile() {
 		// Get x/y position of the tile we want
-		int xTilePos = x / tileWidth;
-		int yTilePos = y / tileHeight;
+		xTilePos = x / tileWidth;
+		yTilePos = y / tileHeight;
 		
-		// Tile is relative to base address
-		tileAddr = tileMapAddress;
+		// Load the tile(from cache)
+		tile = cacheTilemap[xTilePos][yTilePos];
 		
-		// Add 2 bytes per x tile 
-		tileAddr += ((xTilePos % 32) * 2);
+		if (tile==0)
+			tile = cacheTilemap[xTilePos][yTilePos] = PPU.vram[tileMapAddress] | (PPU.vram[tileMapAddress+1]<<8);
 		
-		// If we are on the right 32 tiles, add 0x800 bytes
-		tileAddr += (xTilePos >= 32 ? 0x800 : 0);
-		
-		// Add 64 bytes per y tile 
-		tileAddr += ((yTilePos % 32) * 64);
-		
-		// Add extra if we are on the bottom half
-		if (yTilePos >= 32) {
-			// 32x64 uses B as the bottom half, 64x64 uses C/D
-			if (size == BGSize.bg32x64) {
-				tileAddr += 0x800;
-			} else {
-				tileAddr += 0x1000;
-			}
+		pixelY = y%tileHeight;
+		if ((tile & 0x8000) != 0) { // Vertical flip
+			pixelY = tileHeight - pixelY - 1;
 		}
 		
-		// Load the tile
-		tile = PPU.vram[tileAddr] | (PPU.vram[tileAddr + 1] << 8);
-
-		// yOffset is the number of bytes we have to skip to get to the correct
-		// line for rendering a tile. Each horizontal line in a character is 2 bytes long
-		int yOffset = ((y % tileHeight) * 2);
-		yOffset = ((tile & 0x8000) != 0 ? ((tileHeight * 2) - yOffset - 2) : yOffset);	// Vertical flip
-		
-		// Base address for character data
-		characterAddr = baseAddress + (8 * colorMode.bitDepth * (tile & 0x3FF));
-		characterAddr += yOffset; // Mod for y offset within sprite
-		
-		// If we are in the bottom half of a 16x16 tile, add another row of 16 tiles
-		// to get to the bottom half
-		if (tile16px && (y % 16 >= 8)) {
-			characterAddr += 16 * (8 * colorMode.bitDepth);
-		}
 		
 		tilePaletteOffset = getPaletteOffset();
 		
@@ -173,30 +164,8 @@ public class Background {
 			pixelX = tileWidth - pixelX -1;
 		}
 		
-		// Grab the pixel
-		int xMask = 0x80 >> (pixelX % 8);
-		switch (colorMode) {
-			case Color4:
-				index |= ((PPU.vram[characterAddr] & xMask) != 0) ? 0x1 : 0;
-				index |= ((PPU.vram[characterAddr + 1] & xMask) != 0) ? 0x2 : 0;
-				break;
-			case Color16:
-				index |= ((PPU.vram[characterAddr] & xMask) != 0) ? 0x1 : 0;
-				index |= ((PPU.vram[characterAddr + 1] & xMask) != 0) ? 0x2 : 0;
-				index |= ((PPU.vram[characterAddr + 16] & xMask) != 0) ? 0x4 : 0;
-				index |= ((PPU.vram[characterAddr + 17] & xMask) != 0) ? 0x8 : 0;
-				break;
-			case Color256:
-				index |= ((PPU.vram[characterAddr] & xMask) != 0) ? 0x1 : 0;
-				index |= ((PPU.vram[characterAddr + 1] & xMask) != 0) ? 0x2 : 0;
-				index |= ((PPU.vram[characterAddr + 16] & xMask) != 0) ? 0x4 : 0;
-				index |= ((PPU.vram[characterAddr + 17] & xMask) != 0) ? 0x8 : 0;
-				index |= ((PPU.vram[characterAddr + 32] & xMask) != 0) ? 0x10 : 0;
-				index |= ((PPU.vram[characterAddr + 33] & xMask) != 0) ? 0x20 : 0;
-				index |= ((PPU.vram[characterAddr + 48] & xMask) != 0) ? 0x40 : 0;
-				index |= ((PPU.vram[characterAddr + 49] & xMask) != 0) ? 0x80 : 0;
-				break;
-		}
+		// Get the pixel color
+		index = cacheChardata[(tile & 0x3FF)][pixelX][pixelY];
 		
 		// Don't output transparent
 		if (index != 0) {
@@ -217,13 +186,11 @@ public class Background {
 		
 		// Move to next pixel, wrapping in case we scrolled off the edge of the screen
 		x = (x + 1) % (size.width*tileWidth);
-		
+
 		// If we have processed 8 pixels (or 16 for a 16x16 tile),
 		// move to the next tile.
 		if (((x % 8) == 0 && !tile16px) || (x % 16) == 0) {
 			loadTile();
-		} else if ((x % 16) == 8 && tile16px) {	// Move to the right half of a 16x16 tile
-			characterAddr += 8 * colorMode.bitDepth;
 		}
 		return (index==0 ? 0: index + tilePaletteOffset);
 	}
@@ -377,5 +344,129 @@ public class Background {
 		ret.append(String.format("  Main screen:  %s\n", (mainScreen?"true":"false")));
 		ret.append(String.format("  Sub screen:   %s\n", (subScreen?"true":"false")));
 		return ret.toString();
+	}
+
+	/**
+	 * Declares the range of memory addresses that if changed, will invalidate our stuff
+	 */
+	@Override
+	public int[] getRange() {
+		int tmaStart = tileMapAddress;
+		int tmaEnd = tmaStart + 0x2000;// Assume they take a 64x64map
+		
+		int baStart = baseAddress;
+		int baEnd = baStart + 1024*8*colorMode.bitDepth;
+		
+		// Returns pairs of ranges of memory we care about
+		return new int[]{tmaStart,tmaEnd,baStart,baEnd};
+	}
+	
+	/**
+	 * What to do if the memory regions change
+	 */
+	@Override
+	public void onInvalidate(int addr) {
+		// Determine what this affects(tilemap or characters)
+		if (tileMapAddress > baseAddress) {
+			if (addr >= tileMapAddress) { // Tilemap changed
+				rebuildTilemap(addr);
+			} else { // Character data changed
+				rebuildChardata(addr);
+			}
+		} else {
+			if (addr >= baseAddress) { // Character data changed
+				rebuildChardata(addr);
+			} else { // Tilemap changed
+				rebuildTilemap(addr);
+			}
+		}
+	}
+	// Rebuild the cachedata for the actual tilemap
+	private void rebuildTilemap(int addr) {
+		// Make sure we only operate on addresses in our range(to prevent errors)
+		if (addr >= tileMapAddress+0x2000){
+			return;
+		}
+		int origAddr = addr;
+		addr -= (addr%2);
+		int taddr = addr;
+		
+		// Figure out which x/y tile this is(so we know where to place the data in the cache)
+		int tileX = 0;
+		int tileY = 0;
+		addr -= tileMapAddress;
+		switch(size) {
+			case bg32x32: // No adjustment
+				break;
+			case bg32x64:
+				if (addr >= 0x800) { tileY += 32; addr -= 0x0800;}
+				break;
+			case bg64x32:
+				if (addr >= 0x800) { tileX += 32; addr -= 0x0800;}
+				break;
+			case bg64x64:
+				if (addr >= 0x1800)      { tileX += 32; tileY += 32; addr -= 0x1800;}
+				else if (addr >= 0x1000) { tileY += 32; addr -= 0x1000;}
+				else if (addr >= 0x0800) { tileX += 32; addr -= 0x0800;}
+				break;
+		}
+		
+		tileY += addr/64;
+		addr %= 64;
+		tileX += addr/2;
+		
+		cacheTilemap[tileX][tileY] = PPU.vram[taddr] | (PPU.vram[taddr + 1] << 8);
+	}
+	// Repopulates the cachedata for the actual tiles
+	private void rebuildChardata(int addr) {
+		// Figure out which character tile this will affect
+		int characterNumber = (addr - baseAddress);
+		int charOffset = characterNumber % (8 * colorMode.bitDepth);
+		
+		
+		int characterBaseAddress = addr - charOffset;
+		characterNumber /= (8*colorMode.bitDepth);
+		
+		int charY = charOffset / 2;
+		int charX = charOffset % 8;
+		
+		// Re-render the entire tile
+		for(int pixelY=0; pixelY<tileHeight; pixelY++) {
+			if (pixelY==8)
+				characterBaseAddress += 16*8*colorMode.bitDepth;
+			for (int pixelX=0; pixelX<tileWidth; pixelX++) {
+				if (pixelX==8)
+					characterBaseAddress += 8*colorMode.bitDepth;
+				
+				int cIndex = 0;
+				
+				// Grab the pixel
+				int xMask = 0x80 >> (pixelX % 8);
+				switch (colorMode) {
+					case Color4:
+						cIndex |= ((PPU.vram[characterBaseAddress] & xMask) != 0) ? 0x1 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 1] & xMask) != 0) ? 0x2 : 0;
+						break;
+					case Color16:
+						cIndex |= ((PPU.vram[characterBaseAddress] & xMask) != 0) ? 0x1 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 1] & xMask) != 0) ? 0x2 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 16] & xMask) != 0) ? 0x4 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 17] & xMask) != 0) ? 0x8 : 0;
+						break;
+					case Color256:
+						cIndex |= ((PPU.vram[characterBaseAddress] & xMask) != 0) ? 0x1 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 1] & xMask) != 0) ? 0x2 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 16] & xMask) != 0) ? 0x4 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 17] & xMask) != 0) ? 0x8 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 32] & xMask) != 0) ? 0x10 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 33] & xMask) != 0) ? 0x20 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 48] & xMask) != 0) ? 0x40 : 0;
+						cIndex |= ((PPU.vram[characterBaseAddress + 49] & xMask) != 0) ? 0x80 : 0;
+						break;
+				}
+				cacheChardata[characterNumber][pixelX][pixelY] = cIndex;
+			}
+			characterBaseAddress+=2;
+		}
 	}
 }
