@@ -1,6 +1,6 @@
 package edu.fit.cs.sno.snes.input;
 
-import java.awt.event.KeyEvent;
+import edu.fit.cs.sno.util.Settings;
 
 public enum SNESController {
 	A,
@@ -18,32 +18,31 @@ public enum SNESController {
 	OTHER;
 	
 	public static SNESController fromKeyCode(int code) {
-		switch (code) {
-			case KeyEvent.VK_D:
-				return A;
-			case KeyEvent.VK_F:
-				return B;
-			case KeyEvent.VK_A:
-				return X;
-			case KeyEvent.VK_S:
+            
+            if (code == Settings.getInt(Settings.P1INPUT_A))
+                return A;
+            if (code == Settings.getInt(Settings.P1INPUT_B))
+                return B;
+            if (code == Settings.getInt(Settings.P1INPUT_X))
+		return X;
+            if (code == Settings.getInt(Settings.P1INPUT_Y))
 				return Y;
-			case KeyEvent.VK_W:
+            if (code == Settings.getInt(Settings.P1INPUT_L))
 				return L;
-			case KeyEvent.VK_E:
+            if (code == Settings.getInt(Settings.P1INPUT_R))
 				return R;
-			case KeyEvent.VK_ENTER:
+            if (code == Settings.getInt(Settings.P1INPUT_START))
 				return START;
-			case KeyEvent.VK_SHIFT:
+            if (code == Settings.getInt(Settings.P1INPUT_SELECT))
 				return SELECT;
-			case KeyEvent.VK_UP:
+            if (code == Settings.getInt(Settings.P1INPUT_UP))
 				return UP;
-			case KeyEvent.VK_DOWN:
+            if (code == Settings.getInt(Settings.P1INPUT_DOWN))
 				return DOWN;
-			case KeyEvent.VK_LEFT:
+            if (code == Settings.getInt(Settings.P1INPUT_LEFT))
 				return LEFT;
-			case KeyEvent.VK_RIGHT:
+            if (code == Settings.getInt(Settings.P1INPUT_RIGHT))
 				return RIGHT;
-		}
 		
 		return OTHER;
 	}

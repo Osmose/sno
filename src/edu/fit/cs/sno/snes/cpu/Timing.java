@@ -14,10 +14,10 @@ public class Timing {
 	public static final long cycleTimeNS = (long)((1.0/TARGET_SPEED) * 1000000000.0f);
 	
 	static long totalCycles = 0;        // Total master cycles that have been run
-	static boolean limitSpeed = false;  // Whether or not to limit the speed of execution
+	public static boolean limitSpeed = false;  // Whether or not to limit the speed of execution
 	static long lastTime = 0;           // The last time in nanoseconds we last did a cycle
 	
-	static boolean autoFrameSkip = false;
+	public static boolean autoFrameSkip = false;
 	static {
 		limitSpeed = Settings.isTrue(Settings.CPU_LIMIT_SPEED);
 		autoFrameSkip = Settings.isTrue(Settings.AUTO_FRAME_SKIP);

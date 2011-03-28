@@ -6,9 +6,11 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import edu.fit.cs.sno.snes.Core;
+import edu.fit.cs.sno.snes.apu.APU;
 import edu.fit.cs.sno.snes.cpu.hwregs.CPURegisters;
 import edu.fit.cs.sno.snes.ppu.OAM;
 import edu.fit.cs.sno.snes.ppu.PPU;
+import edu.fit.cs.sno.util.Settings;
 
 public class Input {
 	public static Map<SNESController, Boolean> state = new EnumMap<SNESController, Boolean>(SNESController.class);
@@ -79,7 +81,7 @@ public class Input {
 			}
 			
 			// Don't draw frames while pressed
-			if (e.getKeyCode() == KeyEvent.VK_BACK_QUOTE) {
+			if (e.getKeyCode() == Settings.getInt(Settings.EMUINPUT_FRAMESKIP)) {
 				PPU.renderFrames = false;
 			}
 		}
@@ -87,7 +89,7 @@ public class Input {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			Input.state.put(SNESController.fromKeyCode(e.getKeyCode()), false);
-			if (e.getKeyCode() == KeyEvent.VK_BACK_QUOTE) {
+			if (e.getKeyCode() == Settings.getInt(Settings.EMUINPUT_FRAMESKIP)) {
 				PPU.renderFrames = true;
 			}
 		}
@@ -117,9 +119,6 @@ public class Input {
 			case KeyEvent.VK_5:
 				OAM.userEnabled = !OAM.userEnabled;
 				return true;
-			case KeyEvent.VK_F1:
-				Core.pause = !Core.pause;
-				return true;
 			case KeyEvent.VK_F2:
 				Core.pause = true;
 				Core.advanceFrameOnce = true;
@@ -131,6 +130,14 @@ public class Input {
 				PPU.drawWindow2 = !PPU.drawWindow2;
 				return true;
 		}
+		int code = e.getKeyCode();
+        if (code == Settings.getInt(Settings.EMUINPUT_PAUSE)) {
+			Core.pause = !Core.pause;
+			return true;
+        }else if (code == Settings.getInt(Settings.EMUINPUT_RESETAUDIO)) {
+        	APU.debugReset();
+        	return true;
+        }
 		
 		return false;
 	}
