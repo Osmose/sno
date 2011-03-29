@@ -1,0 +1,99 @@
+body {
+	font: 16px 'Droid Sans', Helvetica, Arial, sans-serif;
+    line-height: 25px;
+}
+
+header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+h1, h2 {
+    font-family: 'Droid Serif', Georgia, Times, serif;
+    margin-top: 40px;
+}
+
+h1 {
+	font-size: 34px;
+	line-height: 58px;
+}
+
+h2 {
+    font-size: 28px;
+    line-height: 52px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+ol {
+	list-style: decimal;
+}
+
+ul {
+	list-style: disc;
+}
+
+li {
+	margin-left: 30px;
+}
+
+abbr {
+    border-bottom: 1px dotted #000000;
+}
+
+#intro {
+    background: #DFDFDF;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+/* Mario / Luigi Choice */
+
+#mario, #luigi {
+    margin: 4px 2px;
+}
+
+#mario {
+    float: left;
+}
+
+#luigi {
+    float: right;
+}
+
+#bubbles {
+    margin: 4px 55px;
+}
+
+#bubble-left, #bubble-right {
+    border: 1px solid #000000;
+    height: 32px;
+    line-height: 32px;
+    padding: 0px 4px;
+    position: relative;
+    text-align: center;
+    
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+}
+
+#bubble-left {
+    margin-bottom: 4px;
+}
+
+#bubble-left .point {
+    position: absolute;
+    top: 12px;
+    left: -8px;
+}
+
+#bubble-right .point {
+    position: absolute;
+    top: 12px;
+    right: -8px;
+}
