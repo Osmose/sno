@@ -1,15 +1,13 @@
 package edu.fit.cs.sno.applet;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
 import edu.fit.cs.sno.snes.ppu.PPU;
-import edu.fit.cs.sno.snes.ppu.SNESColor;
-import edu.fit.cs.sno.util.Log;
-import edu.fit.cs.sno.util.Util;
 
 public class VideoDisplay extends JComponent {
 
@@ -17,10 +15,12 @@ public class VideoDisplay extends JComponent {
 	
 	private BufferedImage backbuffer = new BufferedImage(256, 240, BufferedImage.TYPE_INT_ARGB);
 	
-	public VideoDisplay() {
+	public VideoDisplay(int width, int height) {
 		setBackground(Color.BLACK);
 		
 		setDoubleBuffered(true);
+		setSize(width, height);
+		setPreferredSize(new Dimension(width, height));
 	}
 	
 	@Override

@@ -103,17 +103,22 @@ public class SNOApplet extends JApplet implements ActionListener {
 	
 	private void initGameGui() {
 		// Window default size
+		int w, h;
 		try {
-			setSize(Settings.getInt(Settings.APPLET_WINDOW_WIDTH), Settings.getInt(Settings.APPLET_WINDOW_HEIGHT));
+			w = Settings.getInt(Settings.APPLET_WINDOW_WIDTH);
+			h = Settings.getInt(Settings.APPLET_WINDOW_HEIGHT);
 		} catch (NumberFormatException err) {
-			setSize(256,240);
+			w = 256;
+			h = 240;
 		}
 		
 		// Create video component
-		screen = new VideoDisplay();
+		screen = new VideoDisplay(w, h);
 		getContentPane().add(screen, "Game");
 		getContentPane().add(new SettingsPanel(), "Options");
 		getContentPane().add(new InputSettingsPanel(), "Input");
+		
+		setSize(screen.getWidth(), screen.getHeight() + getJMenuBar().getHeight());
 		
 		// Hook into keyboard events
 		this.setFocusable(true);
