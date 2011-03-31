@@ -73,13 +73,18 @@ public class OAM {
 				// Don't draw transparent pixels or when we're disabled
 				if (color == 0 || !userEnabled) continue;
 				
-				if (mainScreen && curTile.priority >= PPU.priorityMain) {
+				// Masking check
+				boolean masked = Window.checkSpriteMask();
+				boolean mainMask = windowMaskMain && masked;
+				boolean subMask = windowMaskSub && masked;
+				
+				if (mainScreen && !mainMask && curTile.priority >= PPU.priorityMain) {
 					PPU.colorMain = color + curTile.paletteOffset;
 					PPU.priorityMain = curTile.priority;
 					PPU.sourceMain = PPU.SRC_OAM;
 				}
 				
-				if (subScreen && curTile.priority >= PPU.prioritySub) {
+				if (subScreen && !subMask && curTile.priority >= PPU.prioritySub) {
 					PPU.colorSub = color + curTile.paletteOffset;
 					PPU.prioritySub = curTile.priority;
 					PPU.sourceSub = PPU.SRC_OAM;

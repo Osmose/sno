@@ -188,6 +188,8 @@ public class PPU {
 			// Loop until we run out of 4-cycle pixels to process
 			unprocessedCycles += cycles;
 			while (unprocessedCycles > 4) {
+				// TODO: Refactor so x is the x value on the visible screen
+				
 				// Dots 323 and 327 take 6 cycles
 				if (x == 323 || x == 327) {
 					if (unprocessedCycles >= 6) {
@@ -216,9 +218,6 @@ public class PPU {
 					bg[2].loadPixel();
 					bg[3].loadPixel();
 					OAM.loadPixel();
-					
-					// Mask out pixels
-					Window.maskPixel(x - 22);
 					
 					// Screen then combines the output into a single color
 					int color = Screen.doPixel(x - 22);

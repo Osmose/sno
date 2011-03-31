@@ -26,6 +26,8 @@ public class Screen {
 	public static boolean inColorWindow = false;
 	
 	public static int doPixel(int x) {
+		inColorWindow = Window.checkColorWindow();
+		
 		int mainColor = CGRAM.getColor(PPU.colorMain);
 		int subColor = (PPU.prioritySub == 0 ? CGRAM.fixedColor : CGRAM.getColor(PPU.colorSub));
 		

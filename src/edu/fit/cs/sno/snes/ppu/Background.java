@@ -168,19 +168,24 @@ public class Background extends MemoryObserver {
 		index = cacheChardata[(tile & 0x3FF)][pixelX][pixelY];
 		
 		// Don't output transparent or when we're disabled
-		if (index != 0 && userEnabled) {
+		if (index != 0 && enabled()) {
+			// Masking check
+			boolean masked = Window.checkBackgroundMask(this);
+			boolean mainMask = windowMaskMain && masked;
+			boolean subMask = windowMaskSub && masked;
+			
 			// Output on main screen
-			if (mainScreen && curPriority > PPU.priorityMain) {
+			if (mainScreen && !mainMask && curPriority > PPU.priorityMain) {
 				PPU.priorityMain = curPriority;
 				PPU.colorMain = index + tilePaletteOffset;
-				PPU.sourceMain = num;
+				PPU.sourceMain = num - 1;
 			}
 			
 			// Output on subscreen
-			if (subScreen && curPriority > PPU.prioritySub) {
+			if (subScreen && !subMask &&  curPriority > PPU.prioritySub) {
 				PPU.prioritySub = curPriority;
 				PPU.colorSub = index + tilePaletteOffset;
-				PPU.sourceSub = num;
+				PPU.sourceSub = num - 1;
 			}
 		}
 		
