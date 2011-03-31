@@ -78,17 +78,20 @@ public class OAM {
 				boolean mainMask = windowMaskMain && masked;
 				boolean subMask = windowMaskSub && masked;
 				
-				if (mainScreen && !mainMask && curTile.priority >= PPU.priorityMain) {
+				if (mainScreen && !mainMask && curTile.priority > PPU.priorityMain) {
 					PPU.colorMain = color + curTile.paletteOffset;
 					PPU.priorityMain = curTile.priority;
 					PPU.sourceMain = PPU.SRC_OAM;
 				}
 				
-				if (subScreen && !subMask && curTile.priority >= PPU.prioritySub) {
+				if (subScreen && !subMask && curTile.priority > PPU.prioritySub) {
 					PPU.colorSub = color + curTile.paletteOffset;
 					PPU.prioritySub = curTile.priority;
 					PPU.sourceSub = PPU.SRC_OAM;
 				}
+				
+				// Break out if both layers have been written
+				if ((!mainScreen || PPU.sourceMain == PPU.SRC_OAM) && (!subScreen || PPU.sourceSub == PPU.SRC_OAM)) break;
 			}
 		}
 	}
@@ -120,12 +123,12 @@ public class OAM {
 		}
 		
 		numTiles = 0;
-		SpriteTile curTile = curTiles[numTiles];
+		SpriteTile curTile = curTiles[0];
 		Sprite curSprite;
 		
 		// Loop through the sprites in reverse and load up to 34 tiles
 		loadTiles:
-		for (int k = numSprites - 1; k >= 0; k--) {
+		for (int k = 0; k < numSprites; k++) {
 			curSprite = curSprites[k];
 			
 			// yOffset is the pixel row we want within the sprite
