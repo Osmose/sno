@@ -73,13 +73,13 @@ public class OAM {
 				// Don't draw transparent pixels or when we're disabled
 				if (color == 0 || !userEnabled) continue;
 				
-				if (mainScreen && curTile.priority > PPU.priorityMain) {
+				if (mainScreen && curTile.priority >= PPU.priorityMain) {
 					PPU.colorMain = color + curTile.paletteOffset;
 					PPU.priorityMain = curTile.priority;
 					PPU.sourceMain = PPU.SRC_OAM;
 				}
 				
-				if (subScreen && curTile.priority > PPU.prioritySub) {
+				if (subScreen && curTile.priority >= PPU.prioritySub) {
 					PPU.colorSub = color + curTile.paletteOffset;
 					PPU.prioritySub = curTile.priority;
 					PPU.sourceSub = PPU.SRC_OAM;
