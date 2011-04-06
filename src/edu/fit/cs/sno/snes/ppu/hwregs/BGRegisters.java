@@ -143,31 +143,84 @@ public class BGRegisters {
 		}
 	};
 
+	// Previous value for m7 registers
+	private static int m7Prev;
+	
+	/**
+	 * 0x211A - Mode 7 Settings
+	 */
+	public static HWRegister m7sel = new HWRegister() {
+		public void onWrite(int value) {
+			PPU.m7Repeat = ((value >> 6) & 0x3);
+			PPU.m7YFlip = (value & 0x02) != 0;
+			PPU.m7XFlip = (value & 0x01) != 0;
+		}
+	};
+	
+	private static class m7MatrixRegister extends HWRegister {
+		public void onWrite(int value) {
+			val = (value << 8) | m7Prev;
+			m7Prev = value & 0xFF;
+		}
+	}
+	
+	/**
+	 * 0x211B, 0x211C, 0x211D, 0x211E - Mode 7 Matrix Values
+	 */
+	public static HWRegister m7a = new m7MatrixRegister();
+	public static HWRegister m7b = new m7MatrixRegister();
+	public static HWRegister m7c = new m7MatrixRegister();
+	public static HWRegister m7d = new m7MatrixRegister();
+	
+	/**
+	 * 0x211F, 0x2120 - Mode 7 Center
+	 */
+	public static HWRegister m7x = new m7MatrixRegister();
+	public static HWRegister m7y = new m7MatrixRegister();
 	
 	/**
 	 * Background scroll registers, 0x210D - 0x2114
 	 */
 	private static int bgScrollPrev;
+	
 	static class BGHScrollReg extends HWRegister {
 		Background bg = null;
+		boolean m7Write;
+		
 		public BGHScrollReg(int bgnum) {
 			bg = PPU.bg[bgnum];
+			m7Write = bgnum == 0;
 		}
+		
 		@Override
 		public void onWrite(int value) {
 			bg.hscroll = (value << 8) | (bgScrollPrev& ~7) | ((bg.hscroll>>8)&7);
 			bgScrollPrev = value;
+			
+			if (m7Write) {
+				PPU.m7HOffset = (value << 8) | m7Prev;
+				m7Prev = value;
+			}
 		}
 	}
 	static class BGVScrollReg extends HWRegister {
 		Background bg = null;
+		boolean m7Write;
+		
 		public BGVScrollReg(int bgnum) {
 			bg = PPU.bg[bgnum];
+			m7Write = bgnum == 0;
 		}
+		
 		@Override
 		public void onWrite(int value) {
 			bg.vscroll = (value << 8) | bgScrollPrev;
 			bgScrollPrev = value;
+			
+			if (m7Write) {
+				PPU.m7VOffset = (value << 8) | m7Prev;
+				m7Prev = value;
+			}
 		}
 	}
 	

@@ -111,6 +111,7 @@ public class PPURegisters {
 	public static HWRegister setini = new HWRegister() {
 		@Override
 		public void onWrite(int value) {
+			PPU.m7EXTBG = (value & 0x40) != 0;
 			if ((value & 0x08) == 0x08)	System.out.println("Enabling pseudo-hires mode");
 			if ((value & 0x04) == 0x04) System.out.println("Overscan mode enabled");
 			if ((value & 0x02) == 0x02) System.out.println("OBJ interlace enabled");

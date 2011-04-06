@@ -9,8 +9,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import edu.fit.cs.sno.snes.mem.MemoryObserver;
+import edu.fit.cs.sno.snes.ppu.hwregs.BGRegisters;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
 import edu.fit.cs.sno.util.Settings;
+import edu.fit.cs.sno.util.Util;
 
 public class Background extends MemoryObserver {
 	public int num;
@@ -158,6 +160,8 @@ public class Background extends MemoryObserver {
 	public int loadPixel() {
 		int index = 0;
 		
+		if (colorMode == ColorMode.Mode7) return mode7Run();
+		
 		// Determine x offset for pixel we want
 		int pixelX = x % tileWidth;
 		if ((tile & 0x4000) != 0) { // Horizontal flip
@@ -198,6 +202,116 @@ public class Background extends MemoryObserver {
 			loadTile();
 		}
 		return (index==0 ? 0: index + tilePaletteOffset);
+	}
+	
+	/**
+	 * Ported from bsnes
+	 */
+	public int mode7Run() {
+		int a = Util.sclip(16, BGRegisters.m7a.val);
+		int b = Util.sclip(16, BGRegisters.m7b.val);
+		int c = Util.sclip(16, BGRegisters.m7c.val);
+		int d = Util.sclip(16, BGRegisters.m7d.val);
+		
+		int cx = Util.sclip(13, BGRegisters.m7x.val);
+		int cy = Util.sclip(13, BGRegisters.m7y.val);
+		int hoffset = Util.sclip(13, PPU.m7HOffset);
+		int voffset = Util.sclip(13, PPU.m7VOffset);
+		
+		int tempX = PPU.x - 22;
+		int tempY = PPU.y;
+		
+		if (PPU.m7XFlip) tempX = 255 - tempX;
+		if (PPU.m7YFlip) tempY = 255 - tempY;
+		
+		int psx = ((a * m7Clip(hoffset - cx)) & ~63) + ((b * m7Clip(voffset - cy)) & ~63) + ((b * tempY) & ~63) + (cx << 8);
+		int psy = ((c * m7Clip(hoffset - cx)) & ~63) + ((d * m7Clip(voffset - cy)) & ~63) + ((d * tempY) & ~63) + (cy << 8);
+		
+		int px = (psx + (a * tempX)) >> 8;
+		int py = (psy + (x * tempX)) >> 8;
+		
+		int tile = 0, palette = 0, priority = 0;
+		switch (PPU.m7Repeat) {
+			// Screen repetition outside of screen area
+			case 0:
+			case 1:
+				px &= 1023;
+				py &= 1023;
+				tile = PPU.vram[((py >> 3) * 128 + (px >> 3)) << 1];
+				palette = PPU.vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+				break;
+				
+			// Palette color 0 outside of screen area
+			case 2:
+				if(((px | py) & (~1023)) != 0) {
+					palette = 0;
+				} else {
+					px &= 1023;
+					py &= 1023;
+					tile = PPU.vram[((py >> 3) * 128 + (px >> 3)) << 1];
+					palette = PPU.vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+				}
+				break;
+				
+			// Character 0 repetition outside of screen area
+			case 3:
+				if(((px | py) & (~1023)) != 0) {
+					tile = 0;
+				} else {
+					px &= 1023;
+					py &= 1023;
+					tile = PPU.vram[((py >> 3) * 128 + (px >> 3)) << 1];
+				}
+				palette = PPU.vram[(((tile << 6) + ((py & 7) << 3) + (px & 7)) << 1) + 1];
+				break;
+		}
+		
+		if (num == 1) {
+			priority = priority0;
+		} else if (num == 2) {
+			priority = ((palette & 0x80) != 0 ? priority1 : priority0);
+		    palette &= 0x7f;
+		}
+		
+		// Don't output transparent or when we're disabled
+		if (palette != 0 && enabled()) {
+			// Masking check
+			boolean masked = Window.checkBackgroundMask(this);
+			boolean mainMask = windowMaskMain && masked;
+			boolean subMask = windowMaskSub && masked;
+			
+			// Output on main screen
+			if (mainScreen && !mainMask && priority > PPU.priorityMain) {
+				PPU.priorityMain = priority;
+				PPU.colorMain = palette;
+				PPU.sourceMain = num - 1;
+			}
+			
+			// Output on subscreen
+			if (subScreen && !subMask &&  priority > PPU.prioritySub) {
+				PPU.prioritySub = priority;
+				PPU.colorSub = palette;
+				PPU.sourceSub = num - 1;
+			}
+		}
+		
+		// Move to next pixel
+		x++;
+		
+		return palette;
+	}
+	
+	/**
+	 * From anomie's doc
+	 * @param a
+	 * @return
+	 */
+	private int m7Clip(int a) {
+		if ((a & 0x2000) != 0) {
+			return a | (~0x3ff);
+		} else {
+			return a & 0x3ff;
+		}
 	}
 	
 	/**
@@ -371,18 +485,21 @@ public class Background extends MemoryObserver {
 	 */
 	@Override
 	public void onInvalidate(int addr) {
-		// Determine what this affects(tilemap or characters)
-		if (tileMapAddress > baseAddress) {
-			if (addr >= tileMapAddress) { // Tilemap changed
-				rebuildTilemap(addr);
-			} else { // Character data changed
-				rebuildChardata(addr);
-			}
-		} else {
-			if (addr >= baseAddress) { // Character data changed
-				rebuildChardata(addr);
-			} else { // Tilemap changed
-				rebuildTilemap(addr);
+		// Ignore invalidation for mode 7
+		if (colorMode != ColorMode.Mode7) {
+			// Determine what this affects(tilemap or characters)
+			if (tileMapAddress > baseAddress) {
+				if (addr >= tileMapAddress) { // Tilemap changed
+					rebuildTilemap(addr);
+				} else { // Character data changed
+					rebuildChardata(addr);
+				}
+			} else {
+				if (addr >= baseAddress) { // Character data changed
+					rebuildChardata(addr);
+				} else { // Tilemap changed
+					rebuildTilemap(addr);
+				}
 			}
 		}
 	}

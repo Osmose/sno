@@ -3,7 +3,8 @@ package edu.fit.cs.sno.snes.ppu;
 public enum ColorMode {
 	Color4(2),
 	Color16(4),
-	Color256(8);
+	Color256(8),
+	Mode7(0);
 	
 	public int bitDepth;
 	

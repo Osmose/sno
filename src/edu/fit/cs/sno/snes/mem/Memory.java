@@ -155,6 +155,15 @@ public abstract class Memory {
 		mmap[0x2122 - 0x2000] = CGRAM.cgdata;
 		mmap[0x213B - 0x2000] = CGRAM.cgdataread;
 		
+		// Mode 7 registers
+		mmap[0x211A - 0x2000] = BGRegisters.m7sel;
+		mmap[0x211B - 0x2000] = BGRegisters.m7a;
+		mmap[0x211C - 0x2000] = BGRegisters.m7b;
+		mmap[0x211D - 0x2000] = BGRegisters.m7c;
+		mmap[0x211E - 0x2000] = BGRegisters.m7d;
+		mmap[0x211F - 0x2000] = BGRegisters.m7x;
+		mmap[0x2120 - 0x2000] = BGRegisters.m7y;
+		
 		// Audio IO Ports
 		mmap[0x2140 - 0x2000] = APURegisters.apuio0;
 		mmap[0x2141 - 0x2000] = APURegisters.apuio1;

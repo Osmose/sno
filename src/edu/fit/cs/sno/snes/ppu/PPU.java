@@ -73,6 +73,14 @@ public class PPU {
 	public static int skipCount = 0;
 	public static int skipLimit = 5; // draw 1 out of 30 frames
 	
+	// Mode 7 data
+	public static boolean m7EXTBG = false;	// Toggle BG2 in Mode 7
+	public static int m7HOffset;
+	public static int m7VOffset;
+	public static int m7Repeat;
+	public static boolean m7XFlip;
+	public static boolean m7YFlip;
+	
 	public static void setMode(int mode) {
 		PPU.mode = mode;
 		
@@ -111,11 +119,72 @@ public class PPU {
 				}
 				break;
 			case 2:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color16;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color16;
+				bg[2].enabled = false;
+				bg[3].enabled = false;
+				
+				bg[0].priority0 = 3; bg[0].priority1 = 7;
+				bg[1].priority0 = 1; bg[1].priority1 = 5; 
+				OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 8;
+				break;
 			case 3:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color256;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color4;
+				bg[2].enabled = false;
+				bg[3].enabled = false;
+				
+				bg[0].priority0 = 3; bg[0].priority1 = 7;
+				bg[1].priority0 = 1; bg[1].priority1 = 5; 
+				OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 8;
+				break;
 			case 4:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color256;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color4;
+				bg[2].enabled = false;
+				bg[3].enabled = false;
+				
+				bg[0].priority0 = 3; bg[0].priority1 = 7;
+				bg[1].priority0 = 1; bg[1].priority1 = 5; 
+				OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 8;
+				break;
 			case 5:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color16;
+				bg[1].enabled = true; bg[1].colorMode = ColorMode.Color4;
+				bg[2].enabled = false;
+				bg[3].enabled = false;
+				
+				bg[0].priority0 = 3; bg[0].priority1 = 7;
+				bg[1].priority0 = 1; bg[1].priority1 = 5; 
+				OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 8;
+				break;
 			case 6:
+				bg[0].enabled = true; bg[0].colorMode = ColorMode.Color16;
+				bg[1].enabled = false;
+				bg[2].enabled = false;
+				bg[3].enabled = false;
+				
+				bg[0].priority0 = 2; bg[0].priority1 = 5;
+				OAM.priorityMap[0] = 1; OAM.priorityMap[1] = 3; OAM.priorityMap[2] = 4; OAM.priorityMap[3] = 6;
 			case 7:
+				if (m7EXTBG) {
+					bg[0].enabled = true; bg[0].colorMode = ColorMode.Mode7;
+					bg[1].enabled = true; bg[1].colorMode = ColorMode.Mode7;
+					bg[2].enabled = false;
+					bg[3].enabled = false;
+					
+					bg[0].priority0 = 3; bg[0].priority1 = 3;
+					bg[1].priority0 = 1; bg[1].priority1 = 5;
+					OAM.priorityMap[0] = 2; OAM.priorityMap[1] = 4; OAM.priorityMap[2] = 6; OAM.priorityMap[3] = 7;
+				} else {
+					bg[0].enabled = true; bg[0].colorMode = ColorMode.Mode7;
+					bg[1].enabled = false;
+					bg[2].enabled = false;
+					bg[3].enabled = false;
+					
+					bg[0].priority0 = 2; bg[0].priority1 = 2;
+					OAM.priorityMap[0] = 1; OAM.priorityMap[1] = 3; OAM.priorityMap[2] = 4; OAM.priorityMap[3] = 6;
+				}
 				break;
 		}
 	}

@@ -179,6 +179,17 @@ public class Util {
 		
 		return is;
 	}
+	
+	/**
+	 * Clips a signed number to the given number of bits
+	 * @param bits
+	 * @return
+	 */
+	public static int sclip(int bits, int x) {
+		int b = 1 << (bits - 1);
+		int m = (1 << bits) - 1;
+		return ((x & m) ^ b) - b;
+	}
 
 	@SuppressWarnings("unused")
 	public static void brk() {
