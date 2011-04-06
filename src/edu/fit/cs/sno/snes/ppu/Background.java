@@ -224,11 +224,11 @@ public class Background extends MemoryObserver {
 		if (PPU.m7XFlip) tempX = 255 - tempX;
 		if (PPU.m7YFlip) tempY = 255 - tempY;
 		
-		int psx = ((a * m7Clip(hoffset - cx)) & ~63) + ((b * m7Clip(voffset - cy)) & ~63) + ((b * tempY) & ~63) + (cx << 8);
-		int psy = ((c * m7Clip(hoffset - cx)) & ~63) + ((d * m7Clip(voffset - cy)) & ~63) + ((d * tempY) & ~63) + (cy << 8);
+		int psx = ((a * m7Clip(hoffset - cx)) & (~63)) + ((b * m7Clip(voffset - cy)) & (~63)) + ((b * tempY) & (~63)) + (cx << 8);
+		int psy = ((c * m7Clip(hoffset - cx)) & (~63)) + ((d * m7Clip(voffset - cy)) & (~63)) + ((d * tempY) & (~63)) + (cy << 8);
 		
 		int px = (psx + (a * tempX)) >> 8;
-		int py = (psy + (x * tempX)) >> 8;
+		int py = (psy + (c * tempX)) >> 8;
 		
 		int tile = 0, palette = 0, priority = 0;
 		switch (PPU.m7Repeat) {
@@ -302,9 +302,7 @@ public class Background extends MemoryObserver {
 	}
 	
 	/**
-	 * From anomie's doc
-	 * @param a
-	 * @return
+	 * 13 bit sign extend; ported from bsnes
 	 */
 	private int m7Clip(int a) {
 		if ((a & 0x2000) != 0) {
