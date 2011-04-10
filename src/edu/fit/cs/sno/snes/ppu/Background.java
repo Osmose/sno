@@ -469,7 +469,16 @@ public class Background extends MemoryObserver {
 	@Override
 	public int[] getRange() {
 		int tmaStart = tileMapAddress;
-		int tmaEnd = tmaStart + 0x2000;// Assume they take a 64x64map
+		int tmaEnd = tmaStart + 0x800;
+		switch (size) {
+			case bg64x32:
+			case bg32x64:
+				tmaEnd += 0x800;
+				break;
+			case bg64x64:
+				tmaEnd += 0x1800;
+				break;
+		}
 		
 		int baStart = baseAddress;
 		int baEnd = baStart + 1024*8*colorMode.bitDepth;
