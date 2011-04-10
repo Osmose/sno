@@ -26,7 +26,7 @@ public class Timing {
 	static long sinceLastScanline = 0;
 	static long cyclesPerScanLine = 1364;
 	static int scanlines = 262;
-	static int currentScanline = 0;
+	public static int currentScanline = 0;
 	static boolean wramRefreshed = false;
 	static boolean hdmaStarted = false;
 	
@@ -77,10 +77,11 @@ public class Timing {
 				Core.advanceFrameOnce = false;
 				break;
 			}
-		}
-		// Handle auto-joypad read
-		if (currentScanline == 0xE3 && CPU.standardControllerRead) {
-			Input.autoRead();
+			
+			// Handle auto-joypad read
+			if (currentScanline == 0xE3 && CPU.standardControllerRead) {
+				Input.autoRead();
+			}
 		}
 		// Reset back to the top of the screen
 		if (currentScanline >= scanlines) {
