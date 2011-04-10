@@ -102,77 +102,77 @@ public class DMAChannel {
 		System.out.println("HDMA Read: Not implemented");
 	}
 	private void dmaReadPPU() {
-		System.out.println("DMA Read: Not implemented");
+		while(transferSize>0) {
+			int size = dmaTransferPPUOnce(0, dstRegister, srcBank, srcAddress);
+			adjustSrcAddress(size);
+			transferSize -= size;
+		}
 	}
 	
 	private void hdmaWritePPU() {
 		if (addressMode) { // Indirect address
-			int size = dmaWritePPUOnce(indirectBank, transferSize);
+			int size = dmaTransferPPUOnce(indirectBank, transferSize, 0, dstRegister);
 			transferSize += size;
 		} else {
-			int size = dmaWritePPUOnce(srcBank, tableAddr);
+			int size = dmaTransferPPUOnce(srcBank, tableAddr, 0, dstRegister);
 			tableAddr += size;
 		}
 	}
 	
 	private void dmaWritePPU() {
 		while(transferSize>0) {
-			int size = dmaWritePPUOnce(srcBank, srcAddress);
+			int size = dmaTransferPPUOnce(srcBank, srcAddress, 0, dstRegister);
 			adjustSrcAddress(size);
 			transferSize -= size;
 		}
 	}
 	
-	private int dmaWritePPUOnce(int bank, int address) {
-		// Assume direct access
-		int tmpBank = bank;
-		int tmpAddress = address;
-		
+	private int dmaTransferPPUOnce(int fromBank, int fromAddress, int toBank, int toAddress) {
 		int size = 0;
 		int tmp = 0;
 		if (transferMode == 0x0) { // 1 register, write once(1byte)
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			size = 1;
 		} else if (transferMode == 0x01) { // 2 Register write once(2bytes)
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+0);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+1);
-			Core.mem.set(Size.BYTE, 0, dstRegister+1, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			size = 2;
 		} else  if (transferMode == 0x02 || transferMode == 0x06) { // 1 Register Write Twice(2bytes)
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+0);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+1);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			size = 2;
 		} else if (transferMode == 0x03 || transferMode == 0x07) { // 2 Register Write Twice(4bytes)
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+0);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+1);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+2);
-			Core.mem.set(Size.BYTE, 0, dstRegister+1, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
+			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+3);
-			Core.mem.set(Size.BYTE, 0, dstRegister+1, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
+			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			size = 4;
 		} else if (transferMode == 0x04) { // 4 Registers Write once(4bytes)
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+0);
-			Core.mem.set(Size.BYTE, 0, dstRegister, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
+			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+1);
-			Core.mem.set(Size.BYTE, 0, dstRegister+1, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+2);
-			Core.mem.set(Size.BYTE, 0, dstRegister+2, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
+			Core.mem.set(Size.BYTE, toBank, toAddress+2, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, tmpBank, tmpAddress+3);
-			Core.mem.set(Size.BYTE, 0, dstRegister+3, tmp);
+			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
+			Core.mem.set(Size.BYTE, toBank, toAddress+3, tmp);
 			size = 4;
 		} else {
 			System.out.println("Unknown transfer mode");

@@ -522,7 +522,7 @@ public class APU {
 		t1.passCycles(cyclesPassed);
 		t2.passCycles(cyclesPassed);
 		
-		if (true || limitSpeed) {
+		if (limitSpeed) {
 			long sleep, elapsed;
 			do {
 				elapsed = System.nanoTime() - lastTime;

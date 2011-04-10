@@ -257,7 +257,7 @@ public class PPU {
 		if (!vBlanking) {
 			// Loop until we run out of 4-cycle pixels to process
 			unprocessedCycles += cycles;
-			while (unprocessedCycles > 4) {
+			while (unprocessedCycles > 4 && x < 340) {
 				// TODO: Refactor so x is the x value on the visible screen
 				
 				// Dots 323 and 327 take 6 cycles

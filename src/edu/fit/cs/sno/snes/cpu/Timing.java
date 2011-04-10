@@ -37,6 +37,8 @@ public class Timing {
 	
 	private static boolean irqOnCurrentLine = false; // Tracks if an IRQ occurred on the current scanline
 	
+	public static volatile long apuCyclesToRun = 0;
+	
 	public static void cycle(long numCycles) {
 		totalCycles += numCycles;
 		sinceLastScanline += numCycles;
@@ -51,6 +53,8 @@ public class Timing {
 			DMA.HDMAInit();
 			hdmaStarted = true;
 		}
+		
+		apuCyclesToRun += numCycles;
 		
 		// Run PPU
 		PPU.renderCycles(numCycles);

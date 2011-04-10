@@ -524,6 +524,11 @@ public class Background {
 		int charY = charOffset / 2;
 		int charX = charOffset % 8;
 		
+		// Check to make sure we won't overflow the address
+		int largeAddr = characterBaseAddress;
+		largeAddr += (tileWidth * 8 * colorMode.bitDepth);
+		largeAddr += (tileHeight);
+		
 		// Re-render the entire tile
 		for(int pixelY=0; pixelY<tileHeight; pixelY++) {
 			if (pixelY==8)
