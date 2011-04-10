@@ -33,15 +33,12 @@ public class CPURegisters {
 			Log.debug("IRQ Enable set to " + CPU.irqEnable);
 			
 			// Standard Controller Enable
-			temp = (value & 0x01) == 0x01;
-			if (temp != CPU.standardControllerRead) {
-				CPU.standardControllerRead = temp;
-				if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
-					if(CPU.standardControllerRead)
-						Log.debug("Enabling automatic reading of standard controller");
-					else
-						Log.debug("Disabling automatic reading of standard controller");
-				}
+			CPU.standardControllerRead = (value & 0x01) != 0;
+			if (!Settings.isTrue(Settings.CPU_ALT_DEBUG)) {
+				if(CPU.standardControllerRead)
+					Log.debug("Enabling automatic reading of standard controller");
+				else
+					Log.debug("Disabling automatic reading of standard controller");
 			}
 		};
 		@Override
@@ -149,12 +146,15 @@ public class CPURegisters {
 	 * 
 	 */
 	private static int curButton = 16;
+	private static boolean joyLatch = false;
 	public static HWRegister joyser0 = new HWRegister() {
 		// TODO: Support multiple controllers
 		public void onWrite(int value) {
-			if ((value & 1) != 0) {
+			boolean newLatch = (value & 1) != 0;
+			if (newLatch != joyLatch) {
 				curButton = 0;
 			}
+			joyLatch = newLatch;
 		}
 		
 		public int getValue() {

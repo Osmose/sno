@@ -1,5 +1,6 @@
 package edu.fit.cs.sno.snes.ppu;
 
+import edu.fit.cs.sno.snes.ppu.background.Background;
 import edu.fit.cs.sno.util.Util;
 
 public class Window {

@@ -1,4 +1,4 @@
-package edu.fit.cs.sno.snes.ppu;
+package edu.fit.cs.sno.snes.ppu.background;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -9,12 +9,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import edu.fit.cs.sno.snes.mem.MemoryObserver;
+import edu.fit.cs.sno.snes.ppu.ColorMode;
+import edu.fit.cs.sno.snes.ppu.PPU;
+import edu.fit.cs.sno.snes.ppu.SNESColor;
+import edu.fit.cs.sno.snes.ppu.Window;
 import edu.fit.cs.sno.snes.ppu.hwregs.BGRegisters;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
 import edu.fit.cs.sno.util.Settings;
 import edu.fit.cs.sno.util.Util;
 
-public class Background extends MemoryObserver {
+public class Background {
 	public int num;
 	public boolean tile16px;
 	public int tileWidth = 8;
@@ -67,6 +71,9 @@ public class Background extends MemoryObserver {
 	public int priority1;
 	public int curPriority;	// Priority of the current tile
 	
+	private BGTilemapMemoryObserver tilemapMemoryObserver;
+	private BGCharDataMemoryObserver charDataMemoryObserver;
+	
 	// Which background number this is
 	public Background(int number) {
 		num = number;
@@ -82,7 +89,12 @@ public class Background extends MemoryObserver {
 			for(int j=0;j<16;j++)
 				for(int k=0;k<16;k++)
 					cacheChardata[i][j][k]=0;
-		MemoryObserver.addObserver(this);
+		
+		tilemapMemoryObserver = new BGTilemapMemoryObserver(this);
+		charDataMemoryObserver = new BGCharDataMemoryObserver(this);
+		
+		MemoryObserver.addObserver(tilemapMemoryObserver);
+		MemoryObserver.addObserver(charDataMemoryObserver);
 	}
 	
 	/**
@@ -463,55 +475,8 @@ public class Background extends MemoryObserver {
 		return ret.toString();
 	}
 
-	/**
-	 * Declares the range of memory addresses that if changed, will invalidate our stuff
-	 */
-	@Override
-	public int[] getRange() {
-		int tmaStart = tileMapAddress;
-		int tmaEnd = tmaStart + 0x800;
-		switch (size) {
-			case bg64x32:
-			case bg32x64:
-				tmaEnd += 0x800;
-				break;
-			case bg64x64:
-				tmaEnd += 0x1800;
-				break;
-		}
-		
-		int baStart = baseAddress;
-		int baEnd = baStart + 1024*8*colorMode.bitDepth;
-		
-		// Returns pairs of ranges of memory we care about
-		return new int[]{tmaStart,tmaEnd,baStart,baEnd};
-	}
-	
-	/**
-	 * What to do if the memory regions change
-	 */
-	@Override
-	public void onInvalidate(int addr) {
-		// Ignore invalidation for mode 7
-		if (colorMode != ColorMode.Mode7) {
-			// Determine what this affects(tilemap or characters)
-			if (tileMapAddress > baseAddress) {
-				if (addr >= tileMapAddress) { // Tilemap changed
-					rebuildTilemap(addr);
-				} else { // Character data changed
-					rebuildChardata(addr);
-				}
-			} else {
-				if (addr >= baseAddress) { // Character data changed
-					rebuildChardata(addr);
-				} else { // Tilemap changed
-					rebuildTilemap(addr);
-				}
-			}
-		}
-	}
 	// Rebuild the cachedata for the actual tilemap
-	private void rebuildTilemap(int addr) {
+	void rebuildTilemap(int addr) {
 		// Make sure we only operate on addresses in our range(to prevent errors)
 		if (addr >= tileMapAddress+0x2000){
 			return;
@@ -547,7 +512,7 @@ public class Background extends MemoryObserver {
 		cacheTilemap[tileX][tileY] = PPU.vram[taddr] | (PPU.vram[taddr + 1] << 8);
 	}
 	// Repopulates the cachedata for the actual tiles
-	private void rebuildChardata(int addr) {
+	void rebuildChardata(int addr) {
 		// Figure out which character tile this will affect
 		int characterNumber = (addr - baseAddress);
 		int charOffset = characterNumber % (8 * colorMode.bitDepth);

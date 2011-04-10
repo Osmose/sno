@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import edu.fit.cs.sno.applet.SNOApplet;
+import edu.fit.cs.sno.snes.ppu.background.Background;
 import edu.fit.cs.sno.snes.ppu.hwregs.CGRAM;
 import edu.fit.cs.sno.util.Log;
 import edu.fit.cs.sno.util.Settings;

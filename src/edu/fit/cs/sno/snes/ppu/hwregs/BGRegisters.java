@@ -1,9 +1,9 @@
 package edu.fit.cs.sno.snes.ppu.hwregs;
 
 import edu.fit.cs.sno.snes.mem.HWRegister;
-import edu.fit.cs.sno.snes.ppu.BGSize;
-import edu.fit.cs.sno.snes.ppu.Background;
 import edu.fit.cs.sno.snes.ppu.PPU;
+import edu.fit.cs.sno.snes.ppu.background.BGSize;
+import edu.fit.cs.sno.snes.ppu.background.Background;
 import edu.fit.cs.sno.util.Log;
 
 public class BGRegisters {

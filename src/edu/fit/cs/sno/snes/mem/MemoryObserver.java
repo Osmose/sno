@@ -16,7 +16,7 @@ public abstract class MemoryObserver {
 			for(int i=0;i<range.length; i+=2) {
 				int start = range[i];
 				int end = range[i+1];
-				if (address >= start && address <= end) {
+				if (address >= start && address < end) {
 					o.onInvalidate(address);
 					break; // Move on to the next observer
 				}

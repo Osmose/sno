@@ -29,6 +29,8 @@ public class Input {
 		state.put(SNESController.RIGHT, false);
 	}
 	
+	public static boolean autoReadInProgress = false;
+	
 	public static boolean readButton(int i) {
 		switch (i) {
 			case 0: return state.get(SNESController.B);

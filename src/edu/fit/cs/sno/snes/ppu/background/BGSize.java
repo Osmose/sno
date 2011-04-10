@@ -1,4 +1,4 @@
-package edu.fit.cs.sno.snes.ppu;
+package edu.fit.cs.sno.snes.ppu.background;
 
 public enum BGSize {
 	bg32x32(32, 32),
