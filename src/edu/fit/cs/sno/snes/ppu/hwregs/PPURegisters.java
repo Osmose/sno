@@ -1,5 +1,7 @@
 package edu.fit.cs.sno.snes.ppu.hwregs;
 
+import edu.fit.cs.sno.snes.cpu.Timing;
+import edu.fit.cs.sno.snes.input.Input;
 import edu.fit.cs.sno.snes.mem.HWRegister;
 import edu.fit.cs.sno.snes.ppu.Screen;
 import edu.fit.cs.sno.snes.ppu.OAM;
@@ -118,6 +120,8 @@ public class PPURegisters {
 			if ((value & 0x01) == 0x01) System.out.println("Screen interlace enabled");
 		}
 	};
+	
+	// TODO: Move out of PPU into CPU registers
 	/**
 	 * 0x4212 - PPU Status
 	 */
@@ -128,7 +132,11 @@ public class PPURegisters {
 			val |= (PPU.vBlanking ? 0x80 : 0);
 			val |= ((PPU.x>274 || PPU.x<1) ? 0x40 : 0);
 			// TODO: hblank status
-			// TODO: auto-joypad read status
+			
+			// Auto-joypad read; set when auto-joypad read happens, starting at the vblank frame
+			// and ending two frames later (inclusive)
+			// TODO: Handle overscan (vblank at 255 instead of 225)
+			val |= (Timing.currentScanline >= 0xE1 && Timing.currentScanline <= 0xE3 ? 0x01 : 0);
 			
 			return val;
 		}
