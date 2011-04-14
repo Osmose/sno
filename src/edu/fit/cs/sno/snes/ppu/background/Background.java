@@ -150,9 +150,6 @@ public class Background {
 		// Load the tile(from cache)
 		tile = cacheTilemap[xTilePos][yTilePos];
 		
-		if (tile==0)
-			tile = cacheTilemap[xTilePos][yTilePos] = PPU.vram[tileMapAddress] | (PPU.vram[tileMapAddress+1]<<8);
-		
 		pixelY = y%tileHeight;
 		if ((tile & 0x8000) != 0) { // Vertical flip
 			pixelY = tileHeight - pixelY - 1;
@@ -477,11 +474,6 @@ public class Background {
 
 	// Rebuild the cachedata for the actual tilemap
 	void rebuildTilemap(int addr) {
-		// Make sure we only operate on addresses in our range(to prevent errors)
-		if (addr >= tileMapAddress+0x2000){
-			return;
-		}
-		int origAddr = addr;
 		addr -= (addr%2);
 		int taddr = addr;
 		
@@ -490,11 +482,7 @@ public class Background {
 		int tileY = 0;
 		addr -= tileMapAddress;
 		switch(size) {
-			case bg32x32: // No adjustment
-				break;
 			case bg32x64:
-				if (addr >= 0x800) { tileY += 32; addr -= 0x0800;}
-				break;
 			case bg64x32:
 				if (addr >= 0x800) { tileX += 32; addr -= 0x0800;}
 				break;
@@ -511,6 +499,7 @@ public class Background {
 		
 		cacheTilemap[tileX][tileY] = PPU.vram[taddr] | (PPU.vram[taddr + 1] << 8);
 	}
+	
 	// Repopulates the cachedata for the actual tiles
 	void rebuildChardata(int addr) {
 		// Figure out which character tile this will affect
