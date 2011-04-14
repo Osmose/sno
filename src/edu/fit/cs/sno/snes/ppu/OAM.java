@@ -184,7 +184,6 @@ public class OAM {
 	 */
 	public static void vBlank() {
 		resetOAMAddress();
-		scanline(0);
 	}
 	
 	/**
@@ -194,7 +193,12 @@ public class OAM {
 	 * @return
 	 */
 	public static boolean onScanline(Sprite t, int scanline) {
-		return t.x>0 && t.x < PPU.screenWidth - t.getWidth() && scanline >= t.y && scanline < t.y + t.getHeight();
+		if (t.x + t.getWidth() <= 0) return false;
+		if (t.x > PPU.screenWidth) return false;
+		if (t.y + t.getHeight() <= scanline) return false;
+		if (t.y > scanline) return false;
+		
+		return true;
 	}
 	
 	/**
