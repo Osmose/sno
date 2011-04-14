@@ -125,7 +125,7 @@ public class CGRAM {
 	 */
 	public static HWRegister cgadd = new HWRegister() {
 		public void onWrite(int value) {
-			super.onWrite(value << 1);
+			super.onWrite((value << 1) % 512);
 		}
 	};
 	
@@ -140,7 +140,7 @@ public class CGRAM {
 			} else {
 				cgram[cgadd.val] = lowVal;
 				cgram[cgadd.val + 1] = value & 0x7F;
-				cgadd.val += 2;
+				cgadd.val = ((cgadd.val + 2) % 512);
 			}
 			
 			lowByte = !lowByte;
@@ -158,7 +158,7 @@ public class CGRAM {
 			} else {
 				retVal &= 0x80;
 				retVal |= cgram[cgadd.val + 1];
-				cgadd.val += 2;
+				cgadd.val = ((cgadd.val + 2) % 512);
 			}
 			
 			lowByte = !lowByte;
