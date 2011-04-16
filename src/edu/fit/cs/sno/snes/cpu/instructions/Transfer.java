@@ -140,7 +140,11 @@ public class Transfer {
 			if (CPU.status.isIndexRegister()) {
 				CPU.a.setValue(CPU.x.getValue());
 			} else {
-				CPU.a.setRealValue(CPU.x.getValue());
+				if (CPU.status.isMemoryAccess()) {
+					CPU.a.setValue(CPU.x.getValue());
+				} else {
+					CPU.a.setRealValue(CPU.x.getValue());
+				}
 			}
 			
 			CPU.status.setNegative(CPU.a.isNegative());

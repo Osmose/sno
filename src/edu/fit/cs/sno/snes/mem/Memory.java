@@ -35,6 +35,7 @@ public abstract class Memory {
 	public Memory(){
 		// CPU related hwregs
 		mmap[0x4200 - 0x2000] = CPURegisters.interruptEnable;
+		mmap[0x4201 - 0x2000] = CPURegisters.wrio;
 		mmap[0x4207 - 0x2000] = CPURegisters.htimel;
 		mmap[0x4208 - 0x2000] = CPURegisters.htimeh;
 		mmap[0x4209 - 0x2000] = CPURegisters.vtimel;

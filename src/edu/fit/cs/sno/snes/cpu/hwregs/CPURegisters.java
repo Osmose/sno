@@ -48,6 +48,20 @@ public class CPURegisters {
 	};
 	
 	/**
+	 * 0x4201 - I/O Port
+	 */
+	public static HWRegister wrio = new HWRegister() {
+		@Override
+		public void onWrite(int value) {
+			int a = (value >> 7) & 0x01;
+			int b = (value >> 6) & 0x01;
+			
+			//TODO: no idea what these actually do...
+			this.val = value;
+		}
+	};
+	
+	/**
 	 * 0x4207 - H Timer Low Byte
 	 */
 	public static HWRegister htimel = new HWRegister() {
