@@ -120,8 +120,12 @@ public class DMAChannelRegisterGroup {
 		{val = 0xFF;}
 		@Override
 		public void onWrite(int value) {
-			super.onWrite(value);
 			channels[channel].rlc = (value & 0xFF);
+		}
+		
+		@Override
+		public void onRead() {
+			val = (channels[channel].rlc & 0xFF);
 		}
 	};
 }

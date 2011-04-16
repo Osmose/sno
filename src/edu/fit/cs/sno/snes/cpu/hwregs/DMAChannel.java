@@ -29,7 +29,7 @@ public class DMAChannel {
 
 	int rlc = 0xFF; // repeat/line counter
 
-	boolean frameDisabled;//is hdma disabled for this frame?
+	boolean frameDisabled=true;//is hdma disabled for this frame?
 
 	private boolean isRepeat() {
 		return (rlc & 0x80) == 0x80;
@@ -65,6 +65,12 @@ public class DMAChannel {
 		tableAddr = srcAddress;
 		rlc = Core.mem.get(Size.BYTE, srcBank, tableAddr);
 		tableAddr++;
+		if (rlc==0) {
+			frameDisabled = true;
+			doTransfer = false;
+			return;
+		}
+		
 		if (addressMode == true) { // Indirect
 			transferSize = Core.mem.get(Size.SHORT, srcBank, tableAddr);
 			tableAddr += 2;
@@ -75,7 +81,7 @@ public class DMAChannel {
 	
 	public void doHDMA() {
 		if (frameDisabled || !hdmaEnabled) return;
-
+		
 		if (doTransfer) {
 			if (direction == false) hdmaWritePPU();
 			else                    hdmaReadPPU();
@@ -89,7 +95,7 @@ public class DMAChannel {
 				transferSize = Core.mem.get(Size.SHORT, srcBank, tableAddr);
 				tableAddr += 2;
 			}
-			// TODO: handle special case if rlc == 0(rlc is $43xA)
+			// Handle special case if rlc == 0(rlc is $43xA)
 			// SEE: http://wiki.superfamicom.org/snes/show/DMA+%26+HDMA
 			if (rlc == 0) {
 				frameDisabled = true;
@@ -128,6 +134,8 @@ public class DMAChannel {
 	}
 	
 	private int dmaTransferPPUOnce(int fromBank, int fromAddress, int toBank, int toAddress) {
+		// TODO: for normal dma transfers, only write to at most $transferSize registers, even if we are supposed to write to multiple ones this call
+		// TODO: i.e. break out of the statement if transfersize == 0 at any point
 		int size = 0;
 		int tmp = 0;
 		if (transferMode == 0x0) { // 1 register, write once(1byte)
@@ -197,10 +205,11 @@ public class DMAChannel {
 		r += "  HDMA Address Mode: " + (addressMode?"table=pointer":"table=data") + "\n";
 		r += "  Address Increment: " + (addressIncrement?"Decrement":"Increment") + "\n";
 		r += "  Fixed Transfer:    " + fixedTransfer + "\n";
-		r += "  Transfer Mode:     " + Integer.toBinaryString(transferMode)+"\n";
+		r += "  Transfer Mode:     0b" + Integer.toBinaryString(transferMode)+"\n";
 		r += String.format("  Source Address:    %02X:%04X\n",srcBank, srcAddress);
 		r += String.format("  Destination Reg:   %04X\n", dstRegister);
 		r += String.format("  Size/IndirectAddr: %04X\n", transferSize);
+		r += String.format("  Indirect Bank:     %02X\n", indirectBank);
 		return r;
 	}
 }
