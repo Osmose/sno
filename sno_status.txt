@@ -1,0 +1,47 @@
+Status as of 2011-04-17 at 1:09pm
+============================
+tetris/dr mario - work perfectly
+ff4 works(random stack overflows)
+turtles in time(still missing sprites)
+legend of zelda(stack overflow)
+arkanoid looks silly
+paperboy works but colors are wrong
+super mario world - Level load errors
+
+spaceinvaders - Looks perfect, input broken
+
+supervalis - bad graphical glitches, and then crash
+java.lang.ArrayIndexOutOfBoundsException: -450
+java.lang.ArrayIndexOutOfBoundsException: -450
+        at edu.fit.cs.sno.snes.ppu.SpriteTile.getPixel(SpriteTile.java:21)
+        at edu.fit.cs.sno.snes.ppu.OAM.loadPixel(OAM.java:71)
+        at edu.fit.cs.sno.snes.ppu.PPU.renderCycles(PPU.java:290)
+        at edu.fit.cs.sno.snes.cpu.Timing.cycle(Timing.java:60)
+        at edu.fit.cs.sno.snes.mem.Memory.read(Memory.java:204)
+        at edu.fit.cs.sno.snes.cpu.CPU.cycle(CPU.java:522)
+        at edu.fit.cs.sno.snes.Core.cycle(Core.java:65)
+        at edu.fit.cs.sno.snes.Core.run(Core.java:121)
+        at edu.fit.cs.sno.snes.CoreRunnable.run(CoreRunnable.java:23)
+        at java.lang.Thread.run(Thread.java:662)
+
+
+mechwarrior - black then white screen
+super castlevania iv - gfx issue on konami logo; then background tile out of bounds exception
+super metroid - (was anti piracy), now black screen
+megaman man x(not 2/3) - stack overflow after 32948 instructions(possibly interrupt related)
+super ghouls and ghosts - crash writing to 0x80:8fff after 5millionish instructions
+secret of evermore - gfx issues on loading screen,where it seems to get stuck
+secret of mana - stack overflow almost immediately
+simcity - crash writing to 0x03:b4a2
+super mario allstars - black screen
+
+shadowrun - corrupt graphics on intro screens; then crash writing to 00:b7d5(with a rotate instruction)
+zombies ate my neighbors- black screen...
+goof troop - immediate crash writing to 0x83:9e01(22816 instructions in)
+gradius iii - graphics issues on some of the intro logos; but game is perfectly playable
+doom - stack overflow 8271 instructions in
+contra - fails to load
+breath of fires - white screen for 1, pinkscreen for 2
+zoop - black screen
+mario kart - black screen
+uniracers - black screen

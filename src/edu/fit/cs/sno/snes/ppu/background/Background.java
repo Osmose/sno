@@ -83,12 +83,12 @@ public class Background {
 		cacheTilemap = new int[64][64];
 		for (int i=0;i<64;i++)
 			for(int j=0;j<64;j++)
-				cacheTilemap[i][j] = 0;
+				cacheTilemap[i][j] = -1;
 		cacheChardata = new int[4096][16][16]; // 1024 "tiles", size 16x16max
 		for (int i=0;i<4096;i++)
 			for(int j=0;j<16;j++)
 				for(int k=0;k<16;k++)
-					cacheChardata[i][j][k]=0;
+					cacheChardata[i][j][k]=-1;
 		
 		tilemapMemoryObserver = new BGTilemapMemoryObserver(this);
 		charDataMemoryObserver = new BGCharDataMemoryObserver(this);
@@ -149,6 +149,33 @@ public class Background {
 		
 		// Load the tile(from cache)
 		tile = cacheTilemap[xTilePos][yTilePos];
+		if (tile==-1) {
+			// Tile is relative to base address
+			int taddr = tileMapAddress;
+
+			// Add 2 bytes per x tile
+			taddr += ((xTilePos % 32) * 2);
+
+			// If we are on the right 32 tiles, add 0x800 bytes
+			taddr += (xTilePos >= 32 ? 0x800 : 0);
+
+			// Add 64 bytes per y tile
+			taddr += ((yTilePos % 32) * 64);
+
+			// Add extra if we are on the bottom half
+			if (yTilePos >= 32) {
+				// 32x64 uses B as the bottom half, 64x64 uses C/D
+				if (size == BGSize.bg32x64) {
+					taddr += 0x800;
+				} else {
+					taddr += 0x1000;
+				}
+			}
+
+			// Load the tile
+			cacheTilemap[xTilePos][yTilePos] = PPU.vram[taddr] | (PPU.vram[taddr + 1] << 8);
+			tile = cacheTilemap[xTilePos][yTilePos];
+		}
 		
 		pixelY = y%tileHeight;
 		if ((tile & 0x8000) != 0) { // Vertical flip
@@ -179,6 +206,10 @@ public class Background {
 		
 		// Get the pixel color
 		index = cacheChardata[(tile & 0x3FF)][pixelX][pixelY];
+		if (index == -1) {
+			rebuildChardata((tile & 0x3FF)*8*colorMode.bitDepth + baseAddress);
+			index = cacheChardata[(tile & 0x3FF)][pixelX][pixelY];
+		}
 		
 		// Don't output transparent or when we're disabled
 		if (index != 0 && enabled()) {
@@ -556,5 +587,24 @@ public class Background {
 			}
 			characterBaseAddress+=2;
 		}
+	}
+
+	// Invalidate the caches
+	public void invalidateCharCache() {
+		if (!enabled()) return;
+		System.out.println("Rebuilding character cache");
+		for (int i=0;i<4096;i++)
+			for(int j=0;j<16;j++)
+				for(int k=0;k<16;k++)
+					cacheChardata[i][j][k]=-1;
+	}
+
+	public void invalidateTileCache() {
+		if (!enabled()) return;
+		System.out.println("Rebuilding tile cache");
+		for (int i=0;i<64;i++)
+			for(int j=0;j<64;j++)
+				cacheTilemap[i][j] = -1;
+		// These will get updated when LoadTile is called since they are set to -1
 	}
 }

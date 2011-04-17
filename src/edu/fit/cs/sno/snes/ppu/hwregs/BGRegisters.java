@@ -85,6 +85,7 @@ public class BGRegisters {
 		public void onWrite(int value) {
 			PPU.bg[0].tileMapAddress = ((value >> 2) & 0x3F) << 11;
 			PPU.bg[0].size = BGSize.toBGSize(value & 3);
+			PPU.bg[0].invalidateTileCache();
 		}
 	};
 	
@@ -96,6 +97,7 @@ public class BGRegisters {
 		public void onWrite(int value) {
 			PPU.bg[1].tileMapAddress = ((value >> 2) & 0x3F) << 11;
 			PPU.bg[1].size = BGSize.toBGSize(value & 3);
+			PPU.bg[1].invalidateTileCache();
 		}
 	};
 	
@@ -107,6 +109,7 @@ public class BGRegisters {
 		public void onWrite(int value) {
 			PPU.bg[2].tileMapAddress = ((value >> 2) & 0x3F) << 11;
 			PPU.bg[2].size = BGSize.toBGSize(value & 3);
+			PPU.bg[2].invalidateTileCache();
 		}
 	};
 	
@@ -118,6 +121,7 @@ public class BGRegisters {
 		public void onWrite(int value) {
 			PPU.bg[3].tileMapAddress = ((value >> 2) & 0x3F) << 11;
 			PPU.bg[3].size = BGSize.toBGSize(value & 3);
+			PPU.bg[3].invalidateTileCache();
 		}
 	};
 	
@@ -128,7 +132,9 @@ public class BGRegisters {
 		@Override
 		public void onWrite(int value) {
 			PPU.bg[0].baseAddress = (value & 0x07) << 13;
-			PPU.bg[1].baseAddress = (value & 0x70) << 9; 
+			PPU.bg[1].baseAddress = (value & 0x70) << 9;
+			PPU.bg[0].invalidateCharCache();
+			PPU.bg[1].invalidateCharCache();
 		}
 	};
 	
@@ -140,6 +146,8 @@ public class BGRegisters {
 		public void onWrite(int value) {
 			PPU.bg[2].baseAddress = (value & 0x07) << 13;
 			PPU.bg[3].baseAddress = (value & 0x70) << 9; 
+			PPU.bg[2].invalidateCharCache();
+			PPU.bg[3].invalidateCharCache();
 		}
 	};
 
