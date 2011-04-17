@@ -29,6 +29,7 @@ public class BGRegisters {
 			PPU.bg[2].setTileSize(bg3Size);
 			PPU.bg[3].setTileSize(bg4Size);
 			
+			/*
 			if (bg1Size) Log.debug("Setting BG1 Size to 16x16");
 			else         Log.debug("Setting BG1 Size to 8x8");
 			if (bg2Size) Log.debug("Setting BG2 Size to 16x16");
@@ -37,11 +38,12 @@ public class BGRegisters {
 			else         Log.debug("Setting BG3 Size to 8x8");
 			if (bg4Size) Log.debug("Setting BG4 Size to 16x16");
 			else         Log.debug("Setting BG4 Size to 8x8");
+			*/
 			
 			PPU.setMode(value & 0x07);
-			Log.debug("Screen mode is: " + PPU.mode);
+			//Log.debug("Screen mode is: " + PPU.mode);
 			if (PPU.mode == 7) {
-				Log.err("====MODE 7 ENABLED====");
+				//Log.err("====MODE 7 ENABLED====");
 			}
 		}
 	};
@@ -58,6 +60,7 @@ public class BGRegisters {
 			boolean bg3Mosaic = (((value >> 2) & 0x01) == 0x01);
 			boolean bg4Mosaic = (((value >> 3) & 0x01) == 0x01);
 			
+			/*
 			if (bg1Mosaic) Log.debug("Enabling BG1 Mosaic");
 			else           Log.debug("Disabling BG1 Mosaic");
 			if (bg2Mosaic) Log.debug("Enabling BG1 Mosaic");
@@ -66,6 +69,7 @@ public class BGRegisters {
 			else           Log.debug("Disabling BG1 Mosaic");
 			if (bg4Mosaic) Log.debug("Enabling BG1 Mosaic");
 			else           Log.debug("Disabling BG1 Mosaic");
+			*/
 			
 			PPU.bg[0].mosaic = bg1Mosaic;
 			PPU.bg[1].mosaic = bg2Mosaic;
@@ -73,7 +77,7 @@ public class BGRegisters {
 			PPU.bg[3].mosaic = bg4Mosaic;
 			
 			int mosaicModeSize = (value >> 4)  & 0x0F;
-			Log.debug("Mosaic size set to " + mosaicModeSize);
+			//Log.debug("Mosaic size set to " + mosaicModeSize);
 		}
 	};
 	

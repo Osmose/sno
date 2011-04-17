@@ -37,7 +37,7 @@ public class VRAM {
 		public void onWrite(int value) {
 			vramAddress = (vramAddress & 0xFF00) | value;
 			//readDummy = true;
-			Log.debug(String.format("Updating vramaddress to 0x%x", vramAddress));
+			//Log.debug(String.format("Updating vramaddress to 0x%x", vramAddress));
 		}
 	};
 	
@@ -49,7 +49,7 @@ public class VRAM {
 		public void onWrite(int value) {
 			vramAddress = (vramAddress & 0x00FF) | (value << 8);
 			//readDummy = true;
-			Log.debug(String.format("Updating vramaddress to 0x%x", vramAddress));
+			//Log.debug(String.format("Updating vramaddress to 0x%x", vramAddress));
 		}
 	};
 	
