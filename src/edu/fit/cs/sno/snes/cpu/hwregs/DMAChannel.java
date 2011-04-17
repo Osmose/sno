@@ -146,40 +146,41 @@ public class DMAChannel {
 			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			// Don't fetch the next byte if it is a fixed transfer
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
 			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			size = 2;
 		} else  if (transferMode == 0x02 || transferMode == 0x06) { // 1 Register Write Twice(2bytes)
 			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			size = 2;
 		} else if (transferMode == 0x03 || transferMode == 0x07) { // 2 Register Write Twice(4bytes)
 			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
 			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
 			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			size = 4;
 		} else if (transferMode == 0x04) { // 4 Registers Write once(4bytes)
 			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+0);
 			Core.mem.set(Size.BYTE, toBank, toAddress, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+1);
 			Core.mem.set(Size.BYTE, toBank, toAddress+1, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+2);
 			Core.mem.set(Size.BYTE, toBank, toAddress+2, tmp);
 			
-			tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
+			if (!fixedTransfer)	tmp = Core.mem.get(Size.BYTE, fromBank, fromAddress+3);
 			Core.mem.set(Size.BYTE, toBank, toAddress+3, tmp);
 			size = 4;
 		} else {
