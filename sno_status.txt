@@ -1,3 +1,8 @@
+Updates 2011-04-17 at 5:50pm
+============================
+doom - Missing superfx support, which causes execution to fail/become invalid very quickly
+secret of mana - black screen now(instead of crashing)
+
 Status as of 2011-04-17 at 1:09pm
 ============================
 tetris/dr mario - work perfectly

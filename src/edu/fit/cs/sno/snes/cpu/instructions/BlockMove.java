@@ -19,7 +19,7 @@ public class BlockMove {
 		 this.mnemonic = "MVN";}
 		public int run(int[] args) {
 			CPU.dbr.setRealValue(args[0]);
-			while (CPU.a.getValue() != (CPU.a.getSize()==Size.SHORT?0xFFFF:0xFF)) {
+			do {
 				Core.mem.set(Size.BYTE, args[0], CPU.y.getValue(), Core.mem.read(Size.BYTE, args[1], CPU.x.getValue()));
 				CPU.a.subtract(1);
 				CPU.x.add(1);
@@ -27,7 +27,7 @@ public class BlockMove {
 				
 				Timing.cycle(42);
 				if (CPU.checkInterrupts()) break;
-			}
+			} while (CPU.a.getValue() != (CPU.a.getSize()==Size.SHORT?0xFFFF:0xFF));
 			return 0;
 		}
 	};
@@ -41,7 +41,7 @@ public class BlockMove {
 		 this.mnemonic = "MVP";}
 		public int run(int[] args) {
 			CPU.dbr.setRealValue(args[0]);
-			while (CPU.a.getValue() != (CPU.a.getSize()==Size.SHORT?0xFFFF:0xFF)) {
+			do {
 				Core.mem.set(Size.BYTE, args[0], CPU.y.getValue(), Core.mem.read(Size.BYTE, args[1], CPU.x.getValue()));
 				CPU.a.subtract(1);
 				CPU.x.subtract(1);
@@ -49,7 +49,7 @@ public class BlockMove {
 				
 				Timing.cycle(42);
 				if (CPU.checkInterrupts()) break;
-			}
+			} while (CPU.a.getValue() != (CPU.a.getSize()==Size.SHORT?0xFFFF:0xFF));
 			return 0;
 		}
 	};
