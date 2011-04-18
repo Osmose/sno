@@ -465,9 +465,13 @@ public class CPU {
 			} else {
 				Log.instruction("*** NMI");
 			}
-			stackPush(Size.BYTE,  status.getValue());
+			
 			stackPush(Size.BYTE,  pbr.getValue());
 			stackPush(Size.SHORT, pc.getValue());
+			stackPush(Size.BYTE,  status.getValue());
+			
+			status.setDecimalMode(false); // See pg 194 in the cpu documentation
+			
 			pbr.setValue(0);
 			if (!CPU.emulationMode)
 				pc.setValue(Core.mem.read(Size.SHORT, 0, 0xFFEA));
@@ -486,9 +490,11 @@ public class CPU {
 				}
 				
 				irqFlag = true;
-				stackPush(Size.BYTE,  status.getValue());
+				
 				stackPush(Size.BYTE,  pbr.getValue());
 				stackPush(Size.SHORT, pc.getValue());
+				stackPush(Size.BYTE,  status.getValue());
+				status.setDecimalMode(false); // See pg 194 in the cpu documentation
 				pbr.setValue(0);
 				
 				if (!CPU.emulationMode)

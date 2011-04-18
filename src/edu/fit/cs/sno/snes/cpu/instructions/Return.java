@@ -14,10 +14,10 @@ public class Return {
 		{this.name = "Return from Interrupt";
 		 this.mnemonic = "RTI";}
 		public int run(int[] args) {
+			CPU.status.setValue(CPU.stackPull(Size.BYTE));
 			CPU.pc.setValue(CPU.stackPull(Size.SHORT));
 			if (!CPU.emulationMode)
 				CPU.pbr.setValue(CPU.stackPull(Size.BYTE));
-			CPU.status.setValue(CPU.stackPull(Size.BYTE));
 			
 			int cycles = 6;
 			if (!CPU.emulationMode)
