@@ -298,6 +298,7 @@ public class PPU {
 
 				x++;
 			}
+			if (unprocessedCycles>4) unprocessedCycles = 0;
 		}
 	}
 	
