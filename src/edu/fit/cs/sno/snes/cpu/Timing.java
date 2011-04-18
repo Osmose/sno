@@ -69,7 +69,6 @@ public class Timing {
 			sinceLastScanline -= cyclesPerScanLine;
 			currentScanline++;
 			irqOnCurrentLine = false;
-			PPU.scanline();
 			DMA.HDMARun();
 			
 			// Call VBlank only immediately after switching to the right scanline
