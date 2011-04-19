@@ -258,50 +258,46 @@ public class PPU {
 			// Loop until we run out of 4-cycle pixels to process
 			unprocessedCycles += cycles;
 			
-			while (unprocessedCycles > 4) {
-				if (x < 340) {
-					// TODO: Refactor so x is the x value on the visible screen
-					
-					// Dots 323 and 327 take 6 cycles
-					if (x == 323 || x == 327) {
-						if (unprocessedCycles >= 6) {
-							unprocessedCycles -= 6;
-						} else {
-							break;
-						}
+			while (unprocessedCycles > 4 && x < 340) {
+				// TODO: Refactor so x is the x value on the visible screen
+				
+				// Dots 323 and 327 take 6 cycles
+				if (x == 323 || x == 327) {
+					if (unprocessedCycles >= 6) {
+						unprocessedCycles -= 6;
 					} else {
-						unprocessedCycles -= 4;
+						break;
 					}
-					
-					// Only draw pixels 22 - 277
-					if (Util.inRange(x, 22, 277) && (renderFrames || (!renderFrames && skipCount==0))) {
-						// Init output to the background color
-						colorMain = 0;
-						priorityMain = 0;
-						sourceMain = SRC_BACK;
-						
-						colorSub = 0;
-						prioritySub = 0;
-						sourceSub = SRC_BACK;
-						
-						// loadPixel processes the current pixel and sets the output to the correct pixel
-						bg[0].loadPixel();
-						bg[1].loadPixel();
-						bg[2].loadPixel();
-						bg[3].loadPixel();
-						OAM.loadPixel();
-						
-						// Screen then combines the output into a single color
-						int color = Screen.doPixel(x - 22);
-						
-						// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
-						screenBuffer.setRGB(x - 22, y, CGRAM.snesColorToARGB(color, brightness));
-					}
-	
-					x++;
 				} else {
-					scanline();
+					unprocessedCycles -= 4;
 				}
+				
+				// Only draw pixels 22 - 277
+				if (Util.inRange(x, 22, 277) && y < 225 && (renderFrames || (!renderFrames && skipCount==0))) {
+					// Init output to the background color
+					colorMain = 0;
+					priorityMain = 0;
+					sourceMain = SRC_BACK;
+					
+					colorSub = 0;
+					prioritySub = 0;
+					sourceSub = SRC_BACK;
+					
+					// loadPixel processes the current pixel and sets the output to the correct pixel
+					bg[0].loadPixel();
+					bg[1].loadPixel();
+					bg[2].loadPixel();
+					bg[3].loadPixel();
+					OAM.loadPixel();
+					
+					// Screen then combines the output into a single color
+					int color = Screen.doPixel(x - 22);
+					
+					// Write to the screenbuffer, adjusting for the 22 unused pixels at the start of the scanline
+					screenBuffer.setRGB(x - 22, y, CGRAM.snesColorToARGB(color, brightness));
+				}
+
+				x++;
 			}
 		}
 	}
