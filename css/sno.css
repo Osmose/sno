@@ -1,30 +1,60 @@
 body {
-	font: 16px 'Droid Sans', Helvetica, Arial, sans-serif;
-    line-height: 25px;
+	font: 13px 'Helvetica Neue',Helvetica,Arial,Geneva,sans-serif;
+    background: url("../images/bg.png") repeat scroll 0 0 #F0F0F0;
+    line-height: 20px;
 }
 
 header {
+    border-bottom: 2px solid #CFCFCF;
+    height: 90px;
     margin-bottom: 20px;
-    text-align: center;
+}
+
+header #logo {
+    margin-top: 5px;
+}
+
+nav ul {
+    margin-top: 37px;
+}
+
+nav ul li {
+    border-right: 2px solid #E0E1E3;
+    float: right;
+    font-size: 16px;
+    list-style: none;
+    margin: 0 5px 0 0;
+    padding: 0 5px;
+}
+
+nav ul li:first-child {
+    border-right: none;
 }
 
 h1, h2 {
-    font-family: 'Droid Serif', Georgia, Times, serif;
-    margin-top: 40px;
+    font-weight: bold;
+    margin: 0px 0px 18px;
 }
 
 h1 {
-	font-size: 34px;
-	line-height: 58px;
+    border-bottom: 4px solid #E0E1E3;
+	font-size: 24px;
+	line-height: 34px;
 }
 
 h2 {
-    font-size: 28px;
-    line-height: 52px;
+    font-size: 20px;
+}
+
+h3 {
+    border-bottom: 1px solid #E0E1E3;
+    font-size: 16px;
+    margin: 0px 0px 12px;
+    padding: 0px 0px 4px;
 }
 
 p {
-    margin-bottom: 10px;
+    margin-bottom: 22px;
 }
 
 ol {
@@ -39,61 +69,213 @@ li {
 	margin-left: 30px;
 }
 
+dl {
+    margin-bottom: 20px;
+}
+
+dl dt {
+    font-weight: bold;
+}
+
+dl dd { 
+    margin: 0 0 10px 20px;
+}
+
 abbr {
     border-bottom: 1px dotted #000000;
 }
 
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+a {
+    color: #CC0000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #999999;
+}
+
+table {
+    border-top: 1px solid #B5B7BB;
+    border-left: 1px solid #B5B7BB;
+    margin: 0 0 20px;
+    width: 100%;
+}
+
+table td, table th {
+    border-bottom: 1px solid #B5B7BB;
+    border-right: 1px solid #B5B7BB;
+    padding: 2px 4px;
+}
+
+/* SIDEBAR */
+
 #intro {
-    background: #DFDFDF;
+    background: #E0E1E3;
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     border-radius: 8px;
+    margin-bottom: 20px;
     padding: 8px;
 }
 
-/* Mario / Luigi Choice */
-
-#mario, #luigi {
-    margin: 4px 2px;
+.sidenav {
+    list-style-type: none;
+    margin-bottom: 20px;
 }
 
-#mario {
-    float: left;
-}
-
-#luigi {
-    float: right;
-}
-
-#bubbles {
-    margin: 4px 55px;
-}
-
-#bubble-left, #bubble-right {
-    border: 1px solid #000000;
-    height: 32px;
-    line-height: 32px;
-    padding: 0px 4px;
-    position: relative;
-    text-align: center;
+.sidenav li.category {
+    background: #EDEDED;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F7F7F7', endColorstr='#EDEDED');
+    background: -webkit-gradient(linear, left top, left bottom, from(#F7F7F7), to(#EDEDED));
+    background: -moz-linear-gradient(center top , #F7F7F7, #EDEDED);
     
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    border-radius: 8px;
+    border: 1px solid #ACB3B7;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px #FFFFFF inset;
+    color: #464951;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 6px 8px;
+    position: relative;
+    text-shadow: 0 1px 1px #FFFFFF;
 }
 
-#bubble-left {
-    margin-bottom: 4px;
+.sidenav ul.links {
+    background: #E0E1E3; 
+    border: 1px solid #CACACA;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 1px 1px #FFFFFF;
+    list-style-type: none;
+    margin: -3px 0 0;
+    padding: 2px 0;
 }
 
-#bubble-left .point {
+.sidenav ul.links li {
+    font-weight: bold;
+    line-height: 1;
+    margin: 0;
+    padding: 6px 8px;
+}
+
+/* MAIN ARTICLE */
+
+article {
+    background: #FFFFFF;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 -1px 1px rgba(113, 123, 149, 0.2);
+    color: #333333;
+    padding: 18px 244px 18px 18px;
+    position: relative;
+}
+
+article.wide {
+    padding: 18px;
+}
+
+.icon {
+    float: left;
+    margin-right: 8px;
+}
+
+iframe.youtube {
+    display: block;
+    height: 390px;
+    margin: 20px auto;
+    width: 480px;
+}
+
+article .callout {
+    background: #FFD2D2;
+    border: 1px solid #FF6464;
+    font-size: 12px;
+    padding: 12px;
     position: absolute;
-    top: 12px;
-    left: -8px;
+    right: -11px;
+    width: 205px;
 }
 
-#bubble-right .point {
+article .callout:after {
+    bottom: -3px;
+    content: url("../images/callout_wrap.png");
+    height: 8px;
     position: absolute;
-    top: 12px;
-    right: -8px;
+    right: 0;
+    width: 9px;
+}
+
+a.download {
+    background: #84C63C;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#84C63C', endColorstr='#4B9817');
+    background: -webkit-gradient(linear, left top, left bottom, from(#84C63C), to(#4B9817));
+    background: -moz-linear-gradient(center top , #84C63C, #4B9817);
+    
+    border-radius: 3px 3px 3px 3px;
+    display: block;
+    height: 32px;
+    margin: 0 auto 20px;
+    padding: 4px;
+    width: 220px;
+}
+
+a.download .txt {
+    color: #FFFFFF;
+    font-family: 'Droid Serif', arial, serif;
+    font-size: 24px;
+    line-height: 32px;
+    text-shadow: #666666 1px 1px;
+}
+
+a.download .downloadIcon {
+    float: left;
+    margin-right: 10px;
+}
+
+/* FOOTER */
+footer {
+    border-top: 2px solid #CFCFCF;
+    margin: 0px auto;
+    padding-top: 10px;
+    text-align: center;
+    width: 960px;
+}
+
+/*  
+Sticky Footer Solution
+by Steve Hatcher
+http://stever.ca http://www.cssstickyfooter.com
+*/
+
+html, body, #wrapper {height: 100%;}
+
+body > #wrapper { height: auto; min-height: 100%; }
+
+/* must be same height as the footer */
+#content { overflow: auto; padding-bottom: 80px; } 
+
+#footer {
+    position: relative;
+    margin-top: -80px; /* negative value of footer height */
+    clear: both;
+    padding-top: 22px;
+    height: 50px;
+} 
+
+/*Opera Fix*/
+body:before { /* thanks to Maleika (Kohoutec)*/
+    content: "";
+    height:100%;
+    float: left;
+    width: 0;
+    margin-top: -32767px; /* thank you Erik J */
 }

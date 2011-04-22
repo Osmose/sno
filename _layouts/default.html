@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ page.title }} - Super Nintendo Online</title>
+        
+        <link rel="stylesheet" href="css/reset.css" />
+        <link rel="stylesheet" href="css/960.css" />
+        <link rel="stylesheet" href="css/syntax.css" />
+        
+        <link href='http://fonts.googleapis.com/css?family=Droid+Serif' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+        
+        <link rel="stylesheet" href="css/sno.css" />
+        
+        <script src="scripts/html5.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="container_12">
+                <header class="grid_12">
+                    <div id="logo" class="grid_6 alpha">
+                        <img src="images/shortlogo.png" />
+                    </div>
+                    <nav class="grid_6 omega">
+                        <!--
+                        <ul>
+                            <li><a href="#">Help</a></li>
+                            <li><a href="index.html">Home</a></li>
+                        </ul>
+                        -->
+                    </nav>
+                </header>
+                <div class="clear"></div>
+                
+                <aside class="grid_3">
+                    <ul class="sidenav">
+                        <li class="category">About</li>
+                        <ul class="links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="what_is_sno.html">What is SNO?</a></li>
+                            <li><a href="how_to_play.html">How to Play</a></li>
+                            <li><a href="configuration.html">Configuration</a></li>
+                        </ul>
+                    </ul>
+                    <ul class="sidenav">
+                        <li class="category">Embed / Develop</li>
+                        <ul class="links">
+                            <li><a href="embedding.html">Embedding SNO</a></li>
+                            <li><a href="getting_sno.html">Getting SNO</a></li>
+                        </ul>
+                    </ul>
+                    <ul class="sidenav">
+                        <li class="category">Miscellaneous</li>
+                        <ul class="links">
+                            <li><a href="senior_design.html">Senior Design</a></li>
+                        </ul>
+                    </ul>
+                </aside>
+                
+                <section class="grid_9">
+                    <article {% if page.wide %}class="wide"{% endif %}>
+                        {{ content }}
+                    </article>
+                </section>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div id="footer">
+            <footer>
+                <a href="http://sno.github.com">Home</a>
+                |
+                <a href="http://www.github.com/osmose/sno">Github Repo</a>
+                |
+                <a href="http://cs.fit.edu">Florida Tech CS</a>
+                |
+                <a href="http://www.fatcow.com/free-icons">Fatcow Farm-Fresh Icons</a>
+            </footer>
+        </div>
+    </body>
+</html>
