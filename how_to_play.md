@@ -33,17 +33,17 @@ This following image and table show the default controls for SNO.
 
 ![SNO Controller Mapping](images/controls.png)
 
-| SNES Controller | Keyboard       |
-| --------------- | -------------- |
-| D-Pad           | Arrow Keys     |
-| A Button        | D Key          |
-| B Button        | F Key          |
-| X Button        | A Key          |
-| Y Button        | S Key          |
-| R Bumper        | W Key          |
-| L Bumper        | E Key          |
-| Start           | Enter / Return |
-| Select          | Shift          |
+SNES Controller | Keyboard
+--------------- | --------------
+D-Pad           | Arrow Keys
+A Button        | D Key
+B Button        | F Key
+X Button        | A Key         
+Y Button        | S Key
+R Bumper        | W Key
+L Bumper        | E Key
+Start           | Enter / Return
+Select          | Shift
 
 ### Gameplay
 
