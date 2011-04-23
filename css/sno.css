@@ -69,6 +69,14 @@ li {
 	margin-left: 30px;
 }
 
+li p {
+    margin: 0px;
+}
+
+ul ul {
+    margin: 0px;
+}
+
 dl dt {
     font-weight: bold;
 }
@@ -87,6 +95,14 @@ strong {
 
 em {
     font-style: italic;
+}
+
+code {
+    background: #FFD2D2;
+    border: 1px solid #FF6464;
+    font-family: Monaco, monospace;
+    font-size: 11px;
+    padding: 1px;
 }
 
 a {
@@ -124,6 +140,12 @@ table th {
     font-size: 11px;
     overflow: auto;
     padding: 10px;
+}
+
+.highlight code {
+    background: none;
+    border: none;
+    padding: 0px;
 }
 
 /* SIDEBAR */
@@ -261,6 +283,23 @@ footer {
     width: 960px;
 }
 
+footer .attrib {
+    list-style-type: none;
+    margin-top: 5px;
+}
+
+footer .attrib li {
+    display: block;
+    line-height: 11px;
+    margin: 0px;
+    text-align: center;
+}
+
+footer .attrib li a {
+    color: #666666;
+    font-size: 11px;
+}
+
 /*  
 Sticky Footer Solution
 by Steve Hatcher
@@ -276,7 +315,7 @@ body > #wrapper { height: auto; min-height: 100%; }
 
 #footer {
     position: relative;
-    margin-top: -80px; /* negative value of footer height */
+    margin-top: -105px; /* negative value of footer height */
     clear: both;
     padding-top: 22px;
     height: 50px;
