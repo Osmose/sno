@@ -5,7 +5,7 @@ wide: true
 ---
 # Super Nintendo Online
 
-<iframe class="youtube" title="YouTube video player" width="480" height="390" src="http://www.youtube.com/embed/ffwVKDP8nzQ" frameborder="0" allowfullscreen="allowfullscreen">
+<iframe class="youtube" title="YouTube video player" width="640" height="390" src="http://www.youtube.com/embed/bHjrUfbm6bM" frameborder="0" allowfullscreen="allowfullscreen">
 
 </iframe>
 

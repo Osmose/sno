@@ -34,10 +34,10 @@ SNO was originally a Senior Design project by students at Florida Institute of T
    * Presentation [(PPTX)](docs/milestone5/milestone5_presentation.pptx) [(PDF)](docs/milestone5/milestone5_presentation.pdf)
    * [Progress Evaluation](docs/milestone5/milestone5_eval.pdf)
  * __Milestone 6 (April 15th)__
-   * User Manual
-   * Demo Video
-   * Presentation(PPTX) (PDF)
-   * Progress Evaluation
+   * [User Manual](docs/milestone6/manual.pdf)
+   * [Demo Video](docs/milestone6/video.avi)
+   * Presentation [(PPTX)](docs/milestone6/milestone6_presentation.pptx) [(PDF)](docs/milestone6/milestone6_presentation.pdf)
+   * [Progress Evaluation](docs/milestone6/milestone6_eval.pdf)
 
 ### Semester 1
 
