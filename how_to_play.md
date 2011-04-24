@@ -11,7 +11,9 @@ Note that this guide does NOT cover game-specific topics. Only generic Super Nin
 
 ## Starting Up
 
-When you first arrive on a page using SNO, you may receive a warning dialog that looks like one of the dialogs below. This dialog is prompting you to allow SNO to run on your computer. To continue, click the "Run" or "Yes" buttons to allow SNO to run.
+When you first arrive on a page using SNO, you may receive a warning dialog that looks like the dialog below. This dialog is prompting you to allow SNO to run on your computer. To continue, click the "Run" or "Yes" buttons to allow SNO to run.
+
+![Security Warning](images/java_cert.png)
 
 If the website has linked SNO to a ROM file, SNO will automatically load and play the game; you can start playing right away!
 
@@ -29,7 +31,7 @@ SNO maps keys on your keyboard to the buttons on an SNES controller. After the g
 
 ### Controls
 
-This following image and table show the default controls for SNO. 
+This following image and table show the default controls for SNO. Note that you can change the controls to whatever configuration you like; how this is done is explained on the [Configuration page](configuration.html).
 
 ![SNO Controller Mapping](images/controls.png)
 
