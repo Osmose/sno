@@ -2,13 +2,13 @@
 layout: default
 title: Getting SNO
 ---
-<div class="icon"><img src="images/box_down.png" /></div>
+<div class="icon"><img src="images/icons/32/box_down.png" /></div>
 # Getting SNO
 
 To download the latest release of SNO, use the button below.
 
 <a class="download" href="build/sno.jar">
-    <div class="downloadIcon"><img src="images/box_down.png" /></div>
+    <div class="downloadIcon"><img src="images/icons/32/box_down.png" /></div>
     <div class="txt">Download SNO</div>
 </a>
 

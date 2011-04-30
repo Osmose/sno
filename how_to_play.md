@@ -2,7 +2,7 @@
 layout: default
 title: How to Play
 ---
-<div class="icon"><img src="images/controller.png" /></div>
+<div class="icon"><img src="images/icons/32/controller.png" /></div>
 # How to Play
 
 SNO supports playing several popular Super Nintendo games. This section covers how to play a Super Nintendo game on a website that uses SNO.

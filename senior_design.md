@@ -2,7 +2,7 @@
 layout: default
 title: Senior Design
 ---
-<div class="icon"><img src="images/education.png" /></div>
+<div class="icon"><img src="images/icons/32/education.png" /></div>
 # Senior Design
 
 ## Team

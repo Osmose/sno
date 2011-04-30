@@ -2,7 +2,7 @@
 layout: default
 title: Embedding SNO
 ---
-<div class="icon"><img src="images/brick.png" /></div>
+<div class="icon"><img src="images/icons/32/brick.png" /></div>
 # Embedding SNO
 
 SNO is a Java applet, and needs to be embedded in a web page to run (barring things like [AppletViewer](http://en.wikipedia.org/wiki/AppletViewer)). This page explains how you can embed SNO into a web page and what configuration options are available.

@@ -4,6 +4,8 @@ body {
     line-height: 20px;
 }
 
+/* HEADER */
+
 header {
     border-bottom: 2px solid #CFCFCF;
     height: 90px;
@@ -14,22 +16,7 @@ header #logo {
     margin-top: 5px;
 }
 
-nav ul {
-    margin-top: 37px;
-}
-
-nav ul li {
-    border-right: 2px solid #E0E1E3;
-    float: right;
-    font-size: 16px;
-    list-style: none;
-    margin: 0 5px 0 0;
-    padding: 0 5px;
-}
-
-nav ul li:first-child {
-    border-right: none;
-}
+/* GENERAL STYLES */
 
 h1, h2 {
     font-weight: bold;
@@ -196,9 +183,13 @@ table th {
 
 .sidenav ul.links li {
     font-weight: bold;
-    line-height: 1;
+    line-height: 16px;
     margin: 0;
     padding: 6px 8px;
+}
+
+.sidenav ul.links li img {
+    vertical-align: bottom;
 }
 
 /* MAIN ARTICLE */
@@ -280,7 +271,7 @@ footer {
     margin: 0px auto;
     padding-top: 10px;
     text-align: center;
-    width: 960px;
+    width: 940px;
 }
 
 footer .attrib {

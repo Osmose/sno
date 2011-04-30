@@ -2,7 +2,7 @@
 layout: default
 title: What is SNO?
 ---
-<div class="icon"><img src="images/help.png" /></div>
+<div class="icon"><img src="images/icons/32/help.png" /></div>
 # What is SNO?
 
 ## SNO is a Super Nintendo Emulator

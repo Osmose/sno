@@ -2,7 +2,7 @@
 layout: default
 title: Configuration
 ---
-<div class="icon"><img src="images/cog.png" /></div>
+<div class="icon"><img src="images/icons/32/cog.png" /></div>
 # Configuration
 
 SNO offers several options for configuring your gameplay experience.
